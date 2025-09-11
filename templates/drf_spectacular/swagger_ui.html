@@ -1,0 +1,41 @@
+{% load i18n %}
+{% load static %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!doctype html> <!-- Important: must specify -->
+  <html lang="{{ LANGUAGE_CODE }}">
+  <head>
+    <meta charset="utf-8"> <!-- Important: rapi-doc uses utf8 characters -->
+    <script type="module" src="{% static 'js/rapidoc/rapidoc-min.js' %}"></script>
+
+    {% block head %}
+      <title>{{ title|default:"Swagger" }}</title>
+      <meta name="description" content="{{ description|default:'API documentation' }}" data-rh="true">
+      <meta property="og:title" content="{{ title|default:'Swagger' }}" data-rh="true">
+      <meta property="og:description" content="{{ description|default:'API documentation' }}" data-rh="true">
+      <meta property="og:site_name" content="{{ title|default:'Swagger' }}">
+
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      {% include 'includes/favicon.html' %}
+      <link rel="manifest" href="{% static 'site/site.webmanifest' %}" />
+      <link rel="stylesheet" href="{{ swagger_ui_css }}">
+    {% endblock head %}
+    <style>
+      rapi-doc {
+          --bg: #0D1117 !important;
+          --nav-bg-color: #010409 !important;
+          --nav-hover-bg-color: #0D1117 !important;
+          --input-bg: #0D1117 !important;
+          --nav-text-color: rgb(255 255 255 / 70%) !important;
+          --nav-hover-text-color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <rapi-doc spec-url="{% url 'schema' %}" theme="dark" render-style="read" show-header="false"
+              primary-color="#c8d6ff" show-method-in-nav-bar="as-colored-text"
+    >
+      <img slot="nav-logo" src="{% static 'images/logo/Logo_512.png' %}"/>
+    </rapi-doc>
+  </body>
+</html>

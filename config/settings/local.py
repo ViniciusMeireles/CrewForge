@@ -1,0 +1,21 @@
+from .base import *
+
+DEBUG = eval(os.environ.get("DEBUG", "False"))
+ALLOWED_HOSTS = ["*"]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = os.environ.get("MEDIA_URL", "/media/")
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SECURE_SSL_REDIRECT = False
+
+DEV_THIRD_PARTY_APPS = [
+    'django_extensions',
+]
+
+INSTALLED_APPS += DEV_THIRD_PARTY_APPS
+
+CORS_ALLOW_ALL_ORIGINS = True

@@ -1,0 +1,2249 @@
+openapi: 3.0.3
+info:
+  title: CrewForge API
+  version: 1.0.0
+  description: API for development and testing purposes.
+paths:
+  /api/accounts/invitations/:
+    get:
+      operationId: accounts_invitations_list
+      description: List all Invitations.
+      parameters:
+      - in: query
+        name: email
+        schema:
+          type: string
+      - in: query
+        name: email__icontains
+        schema:
+          type: string
+      - in: query
+        name: expired_at
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: expired_at__gt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: expired_at__lt
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: is_accepted
+        schema:
+          type: boolean
+      - in: query
+        name: is_expired
+        schema:
+          type: boolean
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: role
+        schema:
+          type: string
+          enum:
+          - admin
+          - manager
+          - member
+          - owner
+        description: |-
+          User role in the organization
+
+          * `owner` - Owner
+          * `admin` - Admin
+          * `manager` - Manager
+          * `member` - Member
+      - in: query
+        name: role__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      tags:
+      - Invitations
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInvitationList'
+          description: ''
+    post:
+      operationId: accounts_invitations_create
+      description: Create a new Invitation.
+      tags:
+      - Invitations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invitation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Invitation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Invitation'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+          description: ''
+  /api/accounts/invitations/{key}/:
+    get:
+      operationId: accounts_invitations_retrieve
+      description: Retrieve a specific Invitation.
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+          format: uuid
+          description: Key for the invitation
+        required: true
+      tags:
+      - Invitations
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+          description: ''
+    put:
+      operationId: accounts_invitations_update
+      description: Update a Invitation.
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+          format: uuid
+          description: Key for the invitation
+        required: true
+      tags:
+      - Invitations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Invitation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Invitation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Invitation'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+          description: ''
+    delete:
+      operationId: accounts_invitations_destroy
+      description: Delete a Invitation.
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+          format: uuid
+          description: Key for the invitation
+        required: true
+      tags:
+      - Invitations
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/accounts/invitations/choices/:
+    get:
+      operationId: accounts_invitations_choices_retrieve
+      description: List invitations for choices (value/label format).
+      tags:
+      - Invitations
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInvitationChoicesResponseList'
+              examples:
+                ExampleResponse:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - - value: 1
+                        label: Invitation 1
+                      - value: 2
+                        label: Invitation 2
+                  summary: Example response
+          description: List invitations for choices (value/label format).
+  /api/accounts/members/:
+    get:
+      operationId: accounts_members_list
+      description: List all Members.
+      parameters:
+      - in: query
+        name: email__icontains
+        schema:
+          type: string
+      - in: query
+        name: full_name__icontains
+        schema:
+          type: string
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: nickname
+        schema:
+          type: string
+      - in: query
+        name: nickname__icontains
+        schema:
+          type: string
+      - in: query
+        name: organization
+        schema:
+          type: integer
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: role
+        schema:
+          type: string
+          enum:
+          - admin
+          - manager
+          - member
+          - owner
+        description: |-
+          User role in the organization
+
+          * `owner` - Owner
+          * `admin` - Admin
+          * `manager` - Manager
+          * `member` - Member
+      - in: query
+        name: role__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: user
+        schema:
+          type: integer
+      tags:
+      - Members
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMemberModelList'
+          description: ''
+  /api/accounts/members/{id}/:
+    get:
+      operationId: accounts_members_retrieve
+      description: Retrieve a specific Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Member.
+        required: true
+      tags:
+      - Members
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberModel'
+          description: ''
+    put:
+      operationId: accounts_members_update
+      description: Update a Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Member.
+        required: true
+      tags:
+      - Members
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MemberUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MemberUpdate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberUpdate'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema: null
+          description: ''
+    delete:
+      operationId: accounts_members_destroy
+      description: Delete a Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Member.
+        required: true
+      tags:
+      - Members
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/accounts/members/{id}/update_role/:
+    put:
+      operationId: accounts_members_update_role_update
+      description: Update the role of a Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Member.
+        required: true
+      tags:
+      - Members
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberRoleUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MemberRoleUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MemberRoleUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberRoleUpdate'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema: null
+          description: ''
+  /api/accounts/members/choices/:
+    get:
+      operationId: accounts_members_choices_retrieve
+      description: List members for choices (value/label format).
+      tags:
+      - Members
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMemberChoicesResponseList'
+              examples:
+                ExampleResponse:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - - value: 1
+                        label: Member 1
+                      - value: 2
+                        label: Member 2
+                  summary: Example response
+          description: List members for choices (value/label format).
+  /api/accounts/members/create-with-invite/{invitation_key}/:
+    post:
+      operationId: accounts_members_create_with_invite_create
+      description: Create a new Member with an invitation.
+      parameters:
+      - in: path
+        name: invitation_key
+        schema:
+          type: string
+          format: uuid
+        description: The secret key of the invitation.
+        required: true
+      tags:
+      - Members
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberWithInviteCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MemberWithInviteCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MemberWithInviteCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberWithInviteCreate'
+          description: ''
+  /api/accounts/organizations/:
+    get:
+      operationId: accounts_organizations_list
+      description: List all Organizations.
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
+        name: name__icontains
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: slug
+        schema:
+          type: string
+      - in: query
+        name: slug__icontains
+        schema:
+          type: string
+      tags:
+      - Organizations
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrganizationList'
+          description: ''
+    post:
+      operationId: accounts_organizations_create
+      description: Create a new Organization.
+      tags:
+      - Organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+  /api/accounts/organizations/{id}/:
+    get:
+      operationId: accounts_organizations_retrieve
+      description: Retrieve a specific Organization.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Organization.
+        required: true
+      tags:
+      - Organizations
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+    put:
+      operationId: accounts_organizations_update
+      description: Update a Organization.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Organization.
+        required: true
+      tags:
+      - Organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+    delete:
+      operationId: accounts_organizations_destroy
+      description: Delete a Organization.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Organization.
+        required: true
+      tags:
+      - Organizations
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/accounts/organizations/{id}/login/:
+    post:
+      operationId: accounts_organizations_login_create
+      description: Login to the organization.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Organization.
+        required: true
+      tags:
+      - Organizations
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              examples:
+                LoginToOrganization:
+                  value:
+                    detail: Logged in to organization.
+                  summary: Login to organization
+          description: Logged in to organization.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginNotFoundResponse'
+              examples:
+                OrganizationNotFound:
+                  value:
+                    detail: Organization not found.
+                  summary: Organization not found
+          description: Organization not found.
+  /api/accounts/organizations/choices/:
+    get:
+      operationId: accounts_organizations_choices_retrieve
+      description: List organizations for choices (value/label format).
+      tags:
+      - Organizations
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrganizationChoicesResponseList'
+              examples:
+                ExampleResponse:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - - value: 1
+                        label: Organization 1
+                      - value: 2
+                        label: Organization 2
+                  summary: Example response
+          description: List organizations for choices (value/label format).
+  /api/accounts/signup/:
+    post:
+      operationId: accounts_signup_create
+      description: Create a new account.
+      tags:
+      - Signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signup'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Signup'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Signup'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Signup'
+          description: ''
+  /api/auth/password/reset/:
+    post:
+      operationId: auth_password_reset_create
+      description: Request a password reset link to be sent to the user's email.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Password reset link has been sent to your email. Please check
+            your inbox.
+  /api/auth/password/reset/confirm/:
+    post:
+      operationId: auth_password_reset_confirm_create
+      description: Confirm the password reset using the provided token and new password.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Your password has been successfully reset. You can now log
+            in with your new password.
+  /api/auth/token/:
+    post:
+      operationId: auth_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/auth/token/refresh/:
+    post:
+      operationId: auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/auth/token/verify/:
+    post:
+      operationId: auth_token_verify_create
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenVerify'
+          description: ''
+  /api/teams/team-members/:
+    get:
+      operationId: teams_team_members_list
+      description: List all Team Members.
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: member
+        schema:
+          type: integer
+      - in: query
+        name: member_email__icontains
+        schema:
+          type: string
+      - in: query
+        name: member_full_name__icontains
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: role
+        schema:
+          type: string
+          enum:
+          - admin
+          - manager
+          - member
+          - owner
+        description: |-
+          Role of the member in the team
+
+          * `owner` - Owner
+          * `admin` - Admin
+          * `manager` - Manager
+          * `member` - Member
+      - in: query
+        name: role__in
+        schema:
+          type: array
+          items:
+            type: string
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
+      - in: query
+        name: team
+        schema:
+          type: integer
+      - in: query
+        name: team_name
+        schema:
+          type: string
+      - in: query
+        name: team_name__icontains
+        schema:
+          type: string
+      - in: query
+        name: team_slug
+        schema:
+          type: string
+      - in: query
+        name: team_slug__icontains
+        schema:
+          type: string
+      tags:
+      - Team members
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeamMemberList'
+          description: ''
+    post:
+      operationId: teams_team_members_create
+      description: Create a new Team Member.
+      tags:
+      - Team members
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamMember'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeamMember'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeamMember'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMember'
+          description: ''
+  /api/teams/team-members/{id}/:
+    get:
+      operationId: teams_team_members_retrieve
+      description: Retrieve a specific Team Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Team Member.
+        required: true
+      tags:
+      - Team members
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMember'
+          description: ''
+    put:
+      operationId: teams_team_members_update
+      description: Update a Team Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Team Member.
+        required: true
+      tags:
+      - Team members
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamMemberUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeamMemberUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeamMemberUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMemberUpdate'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema: null
+          description: ''
+    delete:
+      operationId: teams_team_members_destroy
+      description: Delete a Team Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Team Member.
+        required: true
+      tags:
+      - Team members
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/teams/team-members/choices/:
+    get:
+      operationId: teams_team_members_choices_retrieve
+      description: List team members for choices (value/label format).
+      tags:
+      - Team members
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeamMemberChoicesResponseList'
+              examples:
+                ExampleResponse:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - - value: 1
+                        label: Team member 1
+                      - value: 2
+                        label: Team member 2
+                  summary: Example response
+          description: List team members for choices (value/label format).
+  /api/teams/teams/:
+    get:
+      operationId: teams_teams_list
+      description: List all Teams.
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: name
+        schema:
+          type: string
+      - in: query
+        name: name__icontains
+        schema:
+          type: string
+      - in: query
+        name: organization
+        schema:
+          type: integer
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: slug
+        schema:
+          type: string
+      - in: query
+        name: slug__icontains
+        schema:
+          type: string
+      tags:
+      - Teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeamList'
+          description: ''
+    post:
+      operationId: teams_teams_create
+      description: Create a new Team.
+      tags:
+      - Teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Team'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Team'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: ''
+  /api/teams/teams/{id}/:
+    get:
+      operationId: teams_teams_retrieve
+      description: Retrieve a specific Team.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Team.
+        required: true
+      tags:
+      - Teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: ''
+    put:
+      operationId: teams_teams_update
+      description: Update a Team.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Team.
+        required: true
+      tags:
+      - Teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Team'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Team'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: ''
+    delete:
+      operationId: teams_teams_destroy
+      description: Delete a Team.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Team.
+        required: true
+      tags:
+      - Teams
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/teams/teams/choices/:
+    get:
+      operationId: teams_teams_choices_retrieve
+      description: List teams for choices (value/label format).
+      tags:
+      - Teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeamChoicesResponseList'
+              examples:
+                ExampleResponse:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - - value: 1
+                        label: Team 1
+                      - value: 2
+                        label: Team 2
+                  summary: Example response
+          description: List teams for choices (value/label format).
+components:
+  schemas:
+    Invitation:
+      type: object
+      description: Mixin to validate the role of a user.
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email of the user to invite
+          maxLength: 254
+        is_expired:
+          type: boolean
+          description: Is the invitation expired
+        is_accepted:
+          type: boolean
+          readOnly: true
+          description: Is the invitation accepted by the user
+        expired_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Date and time when the invitation will expire
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          description: |-
+            User role in the organization
+
+            * `owner` - Owner
+            * `admin` - Admin
+            * `manager` - Manager
+            * `member` - Member
+        organization:
+          type: integer
+          readOnly: true
+          description: Organization to which the user is invited
+      required:
+      - email
+      - is_accepted
+      - organization
+    InvitationChoicesResponse:
+      type: object
+      properties:
+        value:
+          type: integer
+        label:
+          type: string
+      required:
+      - label
+      - value
+    LoginNotFoundResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    LoginResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    MemberChoicesResponse:
+      type: object
+      properties:
+        value:
+          type: integer
+        label:
+          type: string
+      required:
+      - label
+      - value
+    MemberModel:
+      type: object
+      description: Serializer for the Member model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/UserGetOrCreate'
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Is this record active or not
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was initially created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was last updated
+        nickname:
+          type: string
+          nullable: true
+          description: Nickname of the user in the organization
+          maxLength: 100
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          description: |-
+            User role in the organization
+
+            * `owner` - Owner
+            * `admin` - Admin
+            * `manager` - Manager
+            * `member` - Member
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who created the record
+        updated_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who last updated the record
+        organization:
+          type: integer
+          readOnly: true
+          description: Organization to which the user belongs
+      required:
+      - created_at
+      - created_by
+      - id
+      - is_active
+      - organization
+      - updated_at
+      - updated_by
+      - user
+    MemberRoleUpdate:
+      type: object
+      description: Serializer for updating the role of a member.
+      properties:
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          description: |-
+            User role in the organization
+
+            * `owner` - Owner
+            * `admin` - Admin
+            * `manager` - Manager
+            * `member` - Member
+    MemberUpdate:
+      type: object
+      description: Serializer for updating the Member model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/User'
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Is this record active or not
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was initially created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was last updated
+        nickname:
+          type: string
+          nullable: true
+          description: Nickname of the user in the organization
+          maxLength: 100
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+          description: |-
+            User role in the organization
+
+            * `owner` - Owner
+            * `admin` - Admin
+            * `manager` - Manager
+            * `member` - Member
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who created the record
+        updated_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who last updated the record
+        organization:
+          type: integer
+          readOnly: true
+          description: Organization to which the user belongs
+      required:
+      - created_at
+      - created_by
+      - id
+      - is_active
+      - organization
+      - role
+      - updated_at
+      - updated_by
+      - user
+    MemberWithInviteCreate:
+      type: object
+      description: Serializer for creating the Member model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        refresh:
+          type: string
+          nullable: true
+          description: Return the refresh token.
+          readOnly: true
+        access:
+          type: string
+          nullable: true
+          description: Return the access token.
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/UserGetOrCreate'
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Is this record active or not
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was initially created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was last updated
+        nickname:
+          type: string
+          nullable: true
+          description: Nickname of the user in the organization
+          maxLength: 100
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          description: |-
+            User role in the organization
+
+            * `owner` - Owner
+            * `admin` - Admin
+            * `manager` - Manager
+            * `member` - Member
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who created the record
+        updated_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who last updated the record
+        organization:
+          type: integer
+          readOnly: true
+          description: Organization to which the user belongs
+      required:
+      - access
+      - created_at
+      - created_by
+      - id
+      - is_active
+      - organization
+      - refresh
+      - updated_at
+      - updated_by
+      - user
+    Organization:
+      type: object
+      description: Serializer for the Organization model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Is this record active or not
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was initially created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was last updated
+        name:
+          type: string
+          description: Organization name
+          maxLength: 255
+        slug:
+          type: string
+          description: Organization slug
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who created the record
+        updated_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who last updated the record
+        owner:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: Owner of the organization
+      required:
+      - created_at
+      - created_by
+      - id
+      - is_active
+      - name
+      - owner
+      - slug
+      - updated_at
+      - updated_by
+    OrganizationChoicesResponse:
+      type: object
+      properties:
+        value:
+          type: integer
+        label:
+          type: string
+      required:
+      - label
+      - value
+    PaginatedInvitationChoicesResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvitationChoicesResponse'
+    PaginatedInvitationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Invitation'
+    PaginatedMemberChoicesResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberChoicesResponse'
+    PaginatedMemberModelList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberModel'
+    PaginatedOrganizationChoicesResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationChoicesResponse'
+    PaginatedOrganizationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+    PaginatedTeamChoicesResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamChoicesResponse'
+    PaginatedTeamList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Team'
+    PaginatedTeamMemberChoicesResponseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamMemberChoicesResponse'
+    PaginatedTeamMemberList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamMember'
+    PasswordResetConfirm:
+      type: object
+      properties:
+        uid:
+          type: string
+          writeOnly: true
+        token:
+          type: string
+          writeOnly: true
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 8
+      required:
+      - new_password
+      - token
+      - uid
+    PasswordResetRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        uid:
+          type: string
+          description: Return the UID for the user.
+          readOnly: true
+        token:
+          type: string
+          description: Return the token for the user.
+          readOnly: true
+      required:
+      - email
+      - token
+      - uid
+    RoleEnum:
+      enum:
+      - owner
+      - admin
+      - manager
+      - member
+      type: string
+      description: |-
+        * `owner` - Owner
+        * `admin` - Admin
+        * `manager` - Manager
+        * `member` - Member
+    Signup:
+      type: object
+      description: Mixin to add access and refresh token fields to a serializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        refresh:
+          type: string
+          nullable: true
+          description: Return the refresh token.
+          readOnly: true
+        access:
+          type: string
+          nullable: true
+          description: Return the access token.
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/User'
+        organization:
+          $ref: '#/components/schemas/Organization'
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Is this record active or not
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was initially created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was last updated
+        nickname:
+          type: string
+          nullable: true
+          description: Nickname of the user in the organization
+          maxLength: 100
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+          description: |-
+            User role in the organization
+
+            * `owner` - Owner
+            * `admin` - Admin
+            * `manager` - Manager
+            * `member` - Member
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who created the record
+        updated_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who last updated the record
+      required:
+      - access
+      - created_at
+      - created_by
+      - id
+      - is_active
+      - organization
+      - refresh
+      - role
+      - updated_at
+      - updated_by
+      - user
+    Team:
+      type: object
+      description: Mixin for ModelSerializer to add user, member, and organization
+        properties.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Is this record active or not
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was initially created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was last updated
+        name:
+          type: string
+          description: Name of the team
+          maxLength: 100
+        slug:
+          type: string
+          description: Team slug
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          nullable: true
+          description: Description of the team
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who created the record
+        updated_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who last updated the record
+        organization:
+          type: integer
+          readOnly: true
+          description: Organization to which the team belongs
+      required:
+      - created_at
+      - created_by
+      - id
+      - is_active
+      - name
+      - organization
+      - slug
+      - updated_at
+      - updated_by
+    TeamChoicesResponse:
+      type: object
+      properties:
+        value:
+          type: integer
+        label:
+          type: string
+      required:
+      - label
+      - value
+    TeamMember:
+      type: object
+      description: Serializer for the TeamMember model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Is this record active or not
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was initially created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was last updated
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          description: |-
+            Role of the member in the team
+
+            * `owner` - Owner
+            * `admin` - Admin
+            * `manager` - Manager
+            * `member` - Member
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who created the record
+        updated_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who last updated the record
+        team:
+          type: integer
+          description: Team to which this member belongs
+        member:
+          type: integer
+          description: Member of the team
+      required:
+      - created_at
+      - created_by
+      - id
+      - is_active
+      - member
+      - team
+      - updated_at
+      - updated_by
+    TeamMemberChoicesResponse:
+      type: object
+      properties:
+        value:
+          type: integer
+        label:
+          type: string
+      required:
+      - label
+      - value
+    TeamMemberUpdate:
+      type: object
+      description: Serializer for updating a TeamMember.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Is this record active or not
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was initially created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was last updated
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          description: |-
+            Role of the member in the team
+
+            * `owner` - Owner
+            * `admin` - Admin
+            * `manager` - Manager
+            * `member` - Member
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who created the record
+        updated_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who last updated the record
+        team:
+          type: integer
+          readOnly: true
+          description: Team to which this member belongs
+        member:
+          type: integer
+          readOnly: true
+          description: Member of the team
+      required:
+      - created_at
+      - created_by
+      - id
+      - is_active
+      - member
+      - team
+      - updated_at
+      - updated_by
+    TokenObtainPair:
+      type: object
+      description: Mixin to add access and refresh token fields to a serializer.
+      properties:
+        user:
+          allOf:
+          - $ref: '#/components/schemas/UserReady'
+          readOnly: true
+        refresh:
+          type: string
+          nullable: true
+          description: Return the refresh token.
+          readOnly: true
+        access:
+          type: string
+          nullable: true
+          description: Return the access token.
+          readOnly: true
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - user
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenVerify:
+      type: object
+      properties:
+        token:
+          type: string
+          writeOnly: true
+      required:
+      - token
+    User:
+      type: object
+      description: Serializer for creating a user.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+      required:
+      - id
+      - username
+    UserGetOrCreate:
+      type: object
+      description: Serializer for getting or creating a user.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+      required:
+      - id
+      - username
+    UserReady:
+      type: object
+      description: Mixin for ModelSerializer to add user, member, and organization
+        properties.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - id
+      - username
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

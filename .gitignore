@@ -1,0 +1,17 @@
+/**/.idea
+/**/.vscode
+/**/__pycache__
+/**/.pytest_cache
+/**/.envs
+/**/.env
+/**/staticfiles
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv

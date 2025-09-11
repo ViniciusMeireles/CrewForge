@@ -1,0 +1,59 @@
+[project]
+name = "crew-forge"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dj-database-url>=3.0.1",
+    "django-cors-headers>=4.7.0",
+    "django-extensions>=4.1",
+    "django-filter>=25.1",
+    "djangorestframework>=3.16.1",
+    "djangorestframework-simplejwt>=5.5.1",
+    "drf-spectacular>=0.28.0",
+    "drf-spectacular-sidecar>=2025.8.1",
+    "factory-boy>=3.3.3",
+    "gunicorn>=23.0.0",
+    "pillow>=11.3.0",
+    "psycopg>=3.2.9",
+    "whitenoise>=6.9.0",
+]
+
+[dependency-groups]
+dev = [
+    "autoflake>=2.3.1",
+    "black>=25.1.0",
+    "django-extensions>=4.1",
+    "isort>=6.0.1",
+    "pytest-django>=4.11.1",
+]
+
+[tool.black]
+skip-string-normalization = true
+line-length = 120
+
+[tool.isort]
+profile = "black"
+line_length = 120
+skip = [".venv", "migrations", "__pycache__"]
+skip_glob = [
+    "**/migrations/**",
+    "**/__pycache__/**",
+    "**/__init__.py"
+]
+multi_line_output=3
+include_trailing_comma=true
+use_parentheses=true
+known_django = ["django"]
+known_third_party = ["rest_framework"]
+sections = ["FUTURE", "STDLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+default_section = "THIRDPARTY"
+
+[tool.pytest.ini_options]
+python_files = [
+    "tests.py",
+    "test_*.py",
+    "*_test.py",
+    "tests/**/*.py"
+]
