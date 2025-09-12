@@ -209,7 +209,13 @@ SIMPLE_JWT = {
 # Drf Spectacular
 SPECTACULAR_SETTINGS = {
     'TITLE': gettext_lazy('CrewForge API'),
-    'DESCRIPTION': gettext_lazy('API for development and testing purposes.'),
+    'DESCRIPTION': gettext_lazy(
+        '''API service for managing accounts, teams, and permissions with comprehensive organizational hierarchy 
+        support.
+        CrewForge provides a comprehensive foundation for building applications requiring sophisticated organizational 
+        structures, team management, and permission systems with enterprise-grade security and scalability.
+    '''
+    ),
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SWAGGER_UI_DIST': 'SIDECAR',

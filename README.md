@@ -3,6 +3,8 @@
 API service for managing accounts, teams, and permissions with comprehensive 
 organizational hierarchy support.
 
+<img width="2560" height="1080" alt="image" src="https://github.com/user-attachments/assets/33042194-f78f-4e94-ad03-441e77518a86" />
+
 ## Table of Contents
 - [Overview](#overview-open_book)
 - [Key Features](#key-features-sparkles)
@@ -16,6 +18,7 @@ organizational hierarchy support.
     - [Authentication Module](#authentication-module-key)
 - [Stack](#stack-hammer_and_wrench)
 - [Installation](#installation-inbox_tray)
+- [Demo / Deployed Instance](#demo--deployed-instance-earth_americas)
 - [Usage](#usage-computer)
 - [API Documentation](#api-documentation-books)
 - [Security Features](#security-features-shield)
@@ -85,11 +88,15 @@ and secure authentication mechanisms.
 
 
 ## Stack :hammer_and_wrench:
-- :package: **Packaging**: UV
-- :snake: **Backend**: Django, Django REST Framework
-- :file_cabinet: **Database**: PostgreSQL
-- :whale: **Containerization**: Docker, Docker Compose
-- :books: **API Documentation**: Swagger (drf-spectacular, RapiDoc)
+- :package: **Packaging**: [UV](https://docs.astral.sh/uv/)
+- :snake: **Backend**: [Django](https://www.djangoproject.com/), [Django REST Framework](https://www.django-rest-framework.org/), [Django Filter](https://django-filter.readthedocs.io/)
+- :lock: **Authentication**: [Simple JWT](https://django-rest-framework-simplejwt.readthedocs.io/)
+- :file_cabinet: **Database**: [PostgreSQL](https://www.postgresql.org/)
+- :whale: **Containerization**: [Docker](https://docs.docker.com/), [Docker Compose](https://docs.docker.com/compose/)
+- :books: **API Documentation**: [Swagger](https://swagger.io/) ([drf-spectacular](https://drf-spectacular.readthedocs.io/), [RapiDoc](https://rapidocweb.com/))
+- :dash: **WSGI Server**: [Gunicorn](https://gunicorn.org/)
+- :test_tube: **Testing**: [pytest](https://pytest-django.readthedocs.io/), [Factory Boy](https://factoryboy.readthedocs.io/)
+- :blue_book: **Linting & Formatting**: [Black](https://black.readthedocs.io/), [isort](https://pycqa.github.io/isort/)
 
 
 ## Installation :inbox_tray:
@@ -131,11 +138,24 @@ and secure authentication mechanisms.
    - :gear: Admin Panel: `http://localhost:8000/admin/`
 
 
+## Demo / Deployed Instance :earth_americas:
+A live demo of CrewForge is available at: [https://crewforge.onrender.com/](https://crewforge.onrender.com/)
+
+Important — Demo instance limitations:
+
+- **Note**: This demo deployment **does NOT** send password recovery emails. Password reset requests initiated on 
+this deployed instance will not result in delivered emails. 
+
+
 ## Usage :computer:
 - The Swagger UI for API documentation is available at `http://localhost:8000/api/schema/swagger-ui/`.
 - The admin panel is accessible at `http://localhost:8000/admin/`.
 - Use the superuser credentials created during installation to log in to the admin panel.
 - Refer to the API documentation for available endpoints and usage instructions.
+- To start the application, run:
+    ```bash
+   docker compose up -d
+    ```
 - To stop the application, run:
     ```bash
    docker compose down
