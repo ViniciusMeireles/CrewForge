@@ -14,13 +14,12 @@ WORKDIR /app
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-install-project
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml
 
 ADD . /app
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked
+    uv sync --locked --no-install-project --no-dev --no-editable
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["/app/run.sh"]
