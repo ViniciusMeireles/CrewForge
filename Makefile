@@ -1,6 +1,6 @@
 # Makefile for Django/Docker operations
 
-.PHONY: help build up down logs uv_add uv_upgrade makemigrations migrate createsuperuser spectacular format_code test precommit
+.PHONY: help build up down logs uv_add uv_upgrade makemigrations migrate createsuperuser shell_plus spectacular format_code test precommit
 
 DEFAULT_GOAL := help
 
@@ -42,6 +42,9 @@ migrate:  ## Apply migrations for the Django project
 
 createsuperuser:  ## Create a superuser for the Django project
 	docker compose exec django_api uv run python manage.py createsuperuser
+
+shell_plus:  ## Open Django shell with all models imported
+	docker compose exec django_api uv run python manage.py shell_plus
 
 spectacular:  ## Generate OpenAPI schema for the Django project
 	docker compose exec django_api uv run python manage.py spectacular --color --file schema.yml
