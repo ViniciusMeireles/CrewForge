@@ -22,10 +22,9 @@ class OrganizationFactory(ModelFactoryMixin, DjangoModelFactory):
         if not create:
             return
 
-        if extracted or kwargs.get('create_owner', True):
-            from apps.accounts.factories.members import MemberFactory
-            from apps.accounts.factories.users import UserFactory
+        from apps.accounts.factories.members import MemberFactory
+        from apps.accounts.factories.users import UserFactory
 
-            owner_user = UserFactory()
-            self.owner = MemberFactory(user=owner_user, organization=self, role=MemberRoleChoices.OWNER.value)
-            self.save()
+        owner_user = UserFactory()
+        self.owner = MemberFactory(user=owner_user, organization=self, role=MemberRoleChoices.OWNER.value)
+        self.save()

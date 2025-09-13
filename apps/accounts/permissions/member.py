@@ -44,7 +44,7 @@ class MemberPermission(IsActiveMember):
             return True
 
         auth_member = get_member(request)
-        if auth_member != obj and request.method in ["PUT", "PATCH"]:
+        if auth_member != obj and not auth_member.has_admin_permission and request.method in ["PUT", "PATCH"]:
             return False
 
         return (obj.role == MemberRoleChoices.OWNER and auth_member.has_owner_permission) or (

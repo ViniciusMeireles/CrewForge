@@ -38,11 +38,3 @@ class InvitationSerializer(ValidateRoleSerializerMixin, ModelSerializerMixin, se
             if invitation_queryset.exists():
                 raise serializers.ValidationError(_("An invitation with this email already exists."))
         return value
-
-    def validate_organization(self, value):
-        """Validate that the organization is not already associated with the member."""
-        if value and self.instance and value != self.instance.organization:
-            raise serializers.ValidationError(_("Not allowed to change the organization."))
-        if not value and self.auth_organization:
-            return self.auth_organization
-        return value

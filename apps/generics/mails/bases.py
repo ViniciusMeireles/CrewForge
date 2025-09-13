@@ -106,9 +106,12 @@ class EmailBase:
         :param kwargs: Additional attributes to override default values.
         """
         self._is_preview = is_preview
+        self.kwargs = {}
         for key, value in kwargs.items():
             if hasattr(self, key):
                 setattr(self, key, value)
+            else:
+                self.kwargs[key] = value
 
     @property
     def is_preview(self) -> bool:

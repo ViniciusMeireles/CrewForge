@@ -36,14 +36,6 @@ class MemberModelSerializer(ValidateRoleSerializerMixin, ModelSerializerMixin, s
             raise serializers.ValidationError(_("User is already a member of the organization."))
         return value
 
-    def validate_organization(self, value):
-        """Validate that the organization is not already associated with the member."""
-        if value and self.instance and value != self.instance.organization:
-            raise serializers.ValidationError(_("Not allowed to change the organization."))
-        if not value and self.auth_organization:
-            return self.auth_organization
-        return value
-
     def save(self, **kwargs):
         user_data = self.validated_data.pop("user", {})
         user_serializer = self.fields["user"]

@@ -8,7 +8,7 @@ from apps.generics.serializers.choices import ChoiceSerializer
 
 
 class ModelViewSetMixin(RequestUserMixin):
-    """Mixin for viewsets to add user, member, and organization properties."""
+    """Mixin for views to add user, member, and organization properties."""
 
     def perform_destroy(self, instance):
         if hasattr(instance, "is_active"):

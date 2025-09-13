@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from rest_framework import status as http_status
@@ -7,6 +8,8 @@ from apps.accounts.choices import MemberRoleChoices
 from apps.accounts.factories.members import MemberFactory
 from apps.accounts.factories.organizations import OrganizationFactory
 from apps.accounts.factories.users import UserFactory
+
+User = get_user_model()
 
 
 class SignupAPITestCase(APITestCase):
@@ -27,7 +30,7 @@ class SignupAPITestCase(APITestCase):
                 "email": user_data.email,
                 "first_name": user_data.first_name,
                 "last_name": user_data.last_name,
-                "password": "passWord*123",
+                "password": user_data.password,
             },
             "organization": {
                 "name": organization_data.name,
@@ -53,3 +56,67 @@ class SignupAPITestCase(APITestCase):
         self.assertEqual(response.data.get("role"), MemberRoleChoices.OWNER)
         self.assertIsNotNone(response.data.get("access"))
         self.assertIsNotNone(response.data.get("refresh"))
+        user = User.objects.get_or_none(**{User.USERNAME_FIELD: getattr(user_data, User.USERNAME_FIELD)})
+        self.assertIsNotNone(user)
+        self.assertIsNotNone(user.password)
+
+    def test_create_account_existing_user(self):
+        """Test the create view of the signup with an existing user."""
+        existing_user = OrganizationFactory.create().owner.user
+        organization_data = OrganizationFactory.build()
+        member_data = MemberFactory.build()
+
+        payload = {
+            "user": {
+                "username": existing_user.username,
+                "email": existing_user.email,
+                "first_name": existing_user.first_name,
+                "last_name": existing_user.last_name,
+                "password": "passWord*123",
+            },
+            "organization": {
+                "name": organization_data.name,
+                "slug": organization_data.slug,
+            },
+            "nickname": member_data.nickname,
+        }
+
+        response = self.client.post(
+            path=self.url,
+            data=payload,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
+        self.assertIn("user", response.data)
+
+    def test_create_account_empty_password(self):
+        """Test the create view of the signup with an empty password."""
+        user_data = UserFactory.build()
+        organization_data = OrganizationFactory.build()
+        member_data = MemberFactory.build()
+
+        payload = {
+            "user": {
+                "username": user_data.username,
+                "email": user_data.email,
+                "first_name": user_data.first_name,
+                "last_name": user_data.last_name,
+                "password": "",
+            },
+            "organization": {
+                "name": organization_data.name,
+                "slug": organization_data.slug,
+            },
+            "nickname": member_data.nickname,
+        }
+
+        response = self.client.post(
+            path=self.url,
+            data=payload,
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
+        self.assertIn("user", response.data)
+        self.assertIn("password", response.data["user"])
