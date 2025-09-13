@@ -99,13 +99,6 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         super().__init__(*args, **kwargs)
         self.user = None
 
-    @classmethod
-    def validate_new_password(cls, value):
-        """Validate that the new password is not empty."""
-        if not value:
-            raise serializers.ValidationError(_("Password cannot be empty."))
-        return value
-
     def validate(self, attrs):
         """Validate the UID and token."""
         uid = attrs.get('uid')

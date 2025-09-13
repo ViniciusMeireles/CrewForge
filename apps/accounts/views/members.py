@@ -62,7 +62,7 @@ from apps.generics.views.mixins import ModelViewSetMixin
 )
 class MemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
     queryset = Member.objects.all()
-    http_method_names = ["get", "post", "put", "delete", "options"]
+    http_method_names = ["get", "post", "put", "patch", "delete", "options"]
     permission_classes = [MemberPermission]
     filterset_class = MemberFilter
     filter_backends = [backends.DjangoFilterBackend]
@@ -114,12 +114,6 @@ class MemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path="create-with-invite/(?P<invitation_key>[^/.]+)")
     def create_with_invite(self, request, *args, **kwargs):
         """Create a new member."""
-        if "invitation_key" not in self.kwargs:
-            return Response(
-                data={"detail": _("Invitation key is required.")},
-                status=http_status.HTTP_400_BAD_REQUEST,
-            )
-
         if not (invitation := self.get_invitation()):
             return Response(
                 data={"detail": _("Invitation not found or expired.")},
@@ -138,7 +132,7 @@ class MemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
         if invitation := self.get_invitation():
             invitation.accept(member=member, check=False)
 
-    @action(detail=True, methods=["put", "patch"])
+    @action(detail=True, methods=["patch"], url_path="update-role")
     def update_role(self, request, *args, **kwargs):
         """Update the role of a member."""
         kwargs.update({"partial": True})

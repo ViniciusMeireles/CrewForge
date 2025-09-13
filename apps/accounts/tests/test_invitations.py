@@ -9,6 +9,7 @@ from rest_framework.test import APITestCase
 from apps.accounts.choices import MemberRoleChoices
 from apps.accounts.factories.invitations import InvitationFactory
 from apps.accounts.factories.members import MemberFactory
+from apps.accounts.factories.organizations import OrganizationFactory
 from apps.accounts.models.invitation import Invitation
 from apps.accounts.tests.mixins import APITestCaseMixin
 
@@ -90,6 +91,7 @@ class InvitationAPITestCase(APITestCaseMixin, APITestCase):
             "email": invitation_data.email,
             "role": MemberRoleChoices.ADMIN,
             "expired_at": invitation_data.expired_at,
+            "organization": self.organization.id,
         }
         response = self.client.put(
             path=url,
@@ -164,6 +166,16 @@ class InvitationAPITestCase(APITestCaseMixin, APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+        # Test access another organization invitation
+        organization2 = OrganizationFactory.create()
+        self.client.force_authenticate(member=organization2.owner)
+        response = self.client.get(
+            self.detail_url_name,
+            kwargs={"key": invitation.key},
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_404_NOT_FOUND)
 
     def test_expired_invitation(self):
         """Test the expired invitations."""

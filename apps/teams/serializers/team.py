@@ -17,8 +17,6 @@ class TeamSerializer(ModelSerializerMixin, serializers.ModelSerializer):
     def create(self, validated_data):
         """Create a new team."""
         with transaction.atomic():
-            if not 'organization' in validated_data and not 'organization_id' in validated_data:
-                validated_data.update({'organization_id': self.auth_organization_id})
             instance = super().create(validated_data)
             TeamMember.objects.create(
                 member=self.auth_member,

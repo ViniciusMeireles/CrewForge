@@ -48,6 +48,7 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
         self.assertEqual(response.data.get("name"), team_data.name)
         self.assertEqual(response.data.get("description"), team_data.description)
         self.assertEqual(response.data.get("slug"), team_data.slug)
+        self.assertEqual(response.data.get("organization"), self.organization.id)
 
     def test_retrieve_team(self):
         """Test the retrieve view of the teams."""
@@ -60,6 +61,7 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
         self.assertEqual(response.data.get("name"), team.name)
         self.assertEqual(response.data.get("description"), team.description)
         self.assertEqual(response.data.get("slug"), team.slug)
+        self.assertEqual(response.data.get("organization"), self.organization.id)
 
     def test_update_team(self):
         """Test the update view of the teams."""
@@ -81,6 +83,7 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
         self.assertEqual(response.data.get("name"), payload["name"])
         self.assertEqual(response.data.get("description"), payload["description"])
         self.assertEqual(response.data.get("slug"), payload["slug"])
+        self.assertEqual(response.data.get("organization"), self.organization.id)
 
     def test_delete_team(self):
         """Test the delete view of the teams."""

@@ -20,6 +20,7 @@ class UserFactory(DjangoModelFactory):
 
     @factory.post_generation
     def password(self, create, extracted, **kwargs):
+        self.password = DEFAULT_PASSWORD
         if create:
             self.set_password(DEFAULT_PASSWORD)
             self.save()

@@ -5,6 +5,8 @@
 /**/.envs
 /**/.env
 /**/staticfiles
+.coverage
+htmlcov/
 # Python-generated files
 __pycache__/
 *.py[oc]

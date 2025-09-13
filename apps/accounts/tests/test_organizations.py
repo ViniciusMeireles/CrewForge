@@ -84,6 +84,18 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         self.assertNotEqual(member1.organization_id, member2.organization_id)
         self.assertNotEqual(organization_id1, organization_id2)
 
+    def test_login_organization_not_exists(self):
+        """Test the login view of the organization that does not exist."""
+        user = UserFactory.create()
+        self.client.force_authenticate(user=user)
+
+        url = reverse(self.login_url_name, args=[9999])
+        response = self.client.post(
+            path=url,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_404_NOT_FOUND)
+
     def test_retrieve_organization(self):
         """Test the retrieve view of the organization."""
         organization = OrganizationFactory.create()

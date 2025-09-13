@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import timezone
 
@@ -10,6 +11,8 @@ from apps.accounts.factories.members import MemberFactory
 from apps.accounts.factories.users import UserFactory
 from apps.accounts.tests.mixins import APITestCaseMixin
 
+User = get_user_model()
+
 
 class MemberAPITestCase(APITestCaseMixin, APITestCase):
     @classmethod
@@ -19,6 +22,7 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         cls.list_url = reverse(cls.list_url_name)
         cls.choices_url = reverse("accounts:members-choices")
         cls.create_with_invite_url_name = "accounts:members-create-with-invite"
+        cls.update_role_url_name = "accounts:members-update-role"
 
     def setUp(self):
         self.organization = self.new_account()
@@ -82,6 +86,9 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         self._assert_data(response, user_data, member_data)
         self.assertIsNotNone(response.data.get("access"))
         self.assertIsNotNone(response.data.get("refresh"))
+        user = User.objects.get_or_none(**{User.USERNAME_FIELD: getattr(user_data, User.USERNAME_FIELD)})
+        self.assertIsNotNone(user)
+        self.assertIsNotNone(user.password)
 
     def test_retrieve_member(self):
         """Test the retrieve view of the members."""
@@ -112,6 +119,25 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         self.assertEqual(response.status_code, http_status.HTTP_200_OK)
         self._assert_data(response, user_data, member_data)
 
+    def test_update_role_member(self):
+        """Test the update role view of the members."""
+        self.client.force_authenticate(member=self.organization.owner)
+        member_to_update = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.MEMBER,
+        )
+        payload = {
+            "role": MemberRoleChoices.MANAGER,
+        }
+
+        response = self.client.patch(
+            path=reverse(self.update_role_url_name, args=[member_to_update.id]),
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_200_OK)
+        self.assertEqual(response.data.get("role"), MemberRoleChoices.MANAGER)
+
     def test_delete_member(self):
         """Test the delete view of the members."""
         member = MemberFactory(organization=self.organization)
@@ -127,13 +153,10 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         )
         self.assertEqual(response.status_code, http_status.HTTP_404_NOT_FOUND)
 
-    def test_not_permission_member(self):
-        """Test the delete view of the members."""
+    def test_not_permission_member_create(self):
         user_data = UserFactory.build()
         member_data = MemberFactory.build()
         payload = self._payload_for_member(user_data=user_data, member_data=member_data)
-
-        # Test create member
         response = self.client.post(
             path=self.list_url,
             data=payload,
@@ -141,11 +164,20 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         )
         self.assertEqual(response.status_code, http_status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        # Test update member
+    def test_not_permission_member_update(self):
+
+        user_data = UserFactory.build()
+        member_data = MemberFactory.build()
+        payload = self._payload_for_member(user_data=user_data, member_data=member_data)
         member = MemberFactory.create(
             organization=self.organization,
             role=MemberRoleChoices.MEMBER,
         )
+        member_manager = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.MANAGER,
+        )
+        self.client.force_authenticate(member=member_manager)
         response = self.client.put(
             path=reverse(self.detail_url_name, args=[member.id]),
             data=payload,
@@ -153,7 +185,11 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
-        # Test delete member
+    def test_not_permission_member_delete(self):
+        member = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.MEMBER,
+        )
         member_manager = MemberFactory.create(
             organization=self.organization,
             role=MemberRoleChoices.MANAGER,
@@ -164,13 +200,14 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
-        # Test retrieve member
+    def test_not_permission_member_access_another_organization(self):
         external_organization_member = MemberFactory.create()
         response = self.client.get(
             path=reverse(self.detail_url_name, args=[external_organization_member.id]),
         )
         self.assertEqual(response.status_code, http_status.HTTP_404_NOT_FOUND)
 
+    def test_not_permission_inactive_member_access(self):
         inactive_member = MemberFactory.create(is_active=False)
         response = self.client.get(
             path=reverse(self.detail_url_name, args=[inactive_member.id]),
@@ -193,7 +230,7 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
 
     def test_create_member_with_invite_expired(self):
-        """Test the create member with invite when the invite is expired."""
+        """Test the creation member with invite when the invite is expired."""
         user_data = UserFactory.build()
         member_data = MemberFactory.build()
 
@@ -204,6 +241,27 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
             role=member_data.role,
             expired_at=timezone.now() - timezone.timedelta(days=1),
             is_expired=True,
+        )
+
+        response = self.client.post(
+            path=reverse(self.create_with_invite_url_name, args=[invite.key]),
+            data=self._payload_for_member(user_data, member_data),
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_404_NOT_FOUND)
+
+    def test_create_member_with_invite_not_acceptable(self):
+        """Test the creation member with invite when the invite is not acceptable."""
+        user_data = UserFactory.build()
+        member_data = MemberFactory.build()
+
+        # Create an expired invitation
+        invite = InvitationFactory.create(
+            organization=self.organization,
+            email=user_data.email,
+            role=member_data.role,
+            expired_at=timezone.now() - timezone.timedelta(days=1),
+            is_expired=False,
         )
 
         response = self.client.post(

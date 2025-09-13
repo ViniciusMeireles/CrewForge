@@ -31,15 +31,10 @@ class SignupSerializer(UserTokenSerializerMixin, ModelSerializerMixin, serialize
         return data
 
     @classmethod
-    def _get_or_create_user(cls, user_data):
+    def _create_user(cls, user_data):
         """Create a user instance."""
-
-        if user := User.objects.get_or_none(**{cls.username_field: user_data.get(cls.username_field, "")}):
-            return user
-
         user = User(**user_data)
-        if password := user_data.get("password"):
-            user.set_password(password)
+        user.set_password(user_data.get("password"))
         user.save()
         user.created_by = user
         user.updated_by = user
@@ -51,7 +46,7 @@ class SignupSerializer(UserTokenSerializerMixin, ModelSerializerMixin, serialize
             user_data = validated_data.pop("user")
             organization_data = validated_data.pop("organization")
 
-            user = self._get_or_create_user(user_data)
+            user = self._create_user(user_data)
             self.set_tokens_for_user(user)
 
             organization = Organization.objects.create(

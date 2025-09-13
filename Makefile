@@ -54,7 +54,7 @@ format_code:  ## Format code with black
 	docker compose exec django_api uv run isort .
 
 test:  ## Run tests for the Django project
-	docker compose exec django_api uv run python manage.py test
+	docker compose exec django_api uv run pytest
 
 precommit: format_code spectacular test  ## Run code formatting and tests
 	@echo "Pre-commit checks passed."

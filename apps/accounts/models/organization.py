@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.managers.organization import OrganizationManager, OrganizationProfileManager
@@ -29,7 +28,7 @@ class Organization(BaseModel):
     def __str__(self):
         return self.name
 
-    @cached_property
+    @property
     def members(self):
         from apps.accounts.models.member import Member
 

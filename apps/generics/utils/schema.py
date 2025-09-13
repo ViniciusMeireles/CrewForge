@@ -78,6 +78,10 @@ def extend_schema_model_view_set(
             tags=tags,
             description=_("Update a %(name)s." % {"name": get_verbose_name(model)}),
         ),
+        "partial_update": extend_schema(
+            tags=tags,
+            description=_("Partially update a %(name)s." % {"name": get_verbose_name(model)}),
+        ),
         "options": extend_schema(
             tags=tags,
             description=_("Get %(name)s options." % {"name": get_verbose_name(model)}),
