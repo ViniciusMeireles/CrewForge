@@ -45,6 +45,11 @@ jobs:
     - name: Run isort
       run: uv run isort --check-only --diff .
 
+    - name: Collect static files
+      env:
+        DJANGO_SETTINGS_MODULE: config.settings.local
+      run: uv run python manage.py collectstatic --noinput
+
     - name: Run Tests
       env:
         DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
