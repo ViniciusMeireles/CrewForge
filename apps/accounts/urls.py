@@ -36,7 +36,7 @@ accounts_urlpatterns = [
 
 urlpatterns = authentication_urlpatterns + accounts_urlpatterns
 
-if settings.ENVIRONMENT == 'development':
+if settings.ENVIRONMENT in ['development', 'test']:
     from apps.accounts.emails import PasswordResetRequestEmail
 
     urlpatterns += [
