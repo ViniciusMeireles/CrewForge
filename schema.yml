@@ -349,6 +349,38 @@ paths:
             application/json:
               schema: null
           description: ''
+    patch:
+      operationId: accounts_members_partial_update
+      description: Partially update a Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Member.
+        required: true
+      tags:
+      - Members
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMemberUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMemberUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMemberUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberUpdate'
+          description: ''
     delete:
       operationId: accounts_members_destroy
       description: Delete a Member.
@@ -366,9 +398,9 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/accounts/members/{id}/update_role/:
-    put:
-      operationId: accounts_members_update_role_update
+  /api/accounts/members/{id}/update-role/:
+    patch:
+      operationId: accounts_members_update_role_partial_update
       description: Update the role of a Member.
       parameters:
       - in: path
@@ -383,13 +415,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MemberRoleUpdate'
+              $ref: '#/components/schemas/PatchedMemberRoleUpdate'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/MemberRoleUpdate'
+              $ref: '#/components/schemas/PatchedMemberRoleUpdate'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/MemberRoleUpdate'
+              $ref: '#/components/schemas/PatchedMemberRoleUpdate'
       security:
       - jwtAuth: []
       responses:
@@ -1829,6 +1861,73 @@ components:
       - email
       - token
       - uid
+    PatchedMemberRoleUpdate:
+      type: object
+      description: Serializer for updating the role of a member.
+      properties:
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          description: |-
+            User role in the organization
+
+            * `owner` - Owner
+            * `admin` - Admin
+            * `manager` - Manager
+            * `member` - Member
+    PatchedMemberUpdate:
+      type: object
+      description: Serializer for updating the Member model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/User'
+        is_active:
+          type: boolean
+          readOnly: true
+          description: Is this record active or not
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was initially created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was last updated
+        nickname:
+          type: string
+          nullable: true
+          description: Nickname of the user in the organization
+          maxLength: 100
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+          description: |-
+            User role in the organization
+
+            * `owner` - Owner
+            * `admin` - Admin
+            * `manager` - Manager
+            * `member` - Member
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who created the record
+        updated_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who last updated the record
+        organization:
+          type: integer
+          readOnly: true
+          description: Organization to which the user belongs
     RoleEnum:
       enum:
       - owner
