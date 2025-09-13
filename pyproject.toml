@@ -24,6 +24,7 @@ dev = [
     "django-extensions>=4.1",
     "factory-boy>=3.3.3",
     "isort>=6.0.1",
+    "pytest-cov>=7.0.0",
     "pytest-django>=4.11.1",
 ]
 
@@ -49,9 +50,28 @@ sections = ["FUTURE", "STDLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLD
 default_section = "THIRDPARTY"
 
 [tool.pytest.ini_options]
+addopts = "--cov=. --cov-report=term-missing"
 python_files = [
     "tests.py",
     "test_*.py",
     "*_test.py",
     "tests/**/*.py"
+]
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "*/commands/*",
+    "*/tests/*",
+    "*/__init__.py",
+    "config/settings/local.py",
+    "config/settings/production.py",
+    "manage.py",
+    "wsgi.py",
+    "asgi.py"
+]
+
+[tool.coverage.report]
+exclude_also = [
+    "def __str__",
 ]
