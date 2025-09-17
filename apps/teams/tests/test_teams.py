@@ -116,3 +116,143 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_authenticated_list_teams(self):
+        """Test the list view of the teams without authentication."""
+        self.client.logout()
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_retrieve_team(self):
+        """Test the retrieve view of the teams without authentication."""
+        team = TeamFactory(organization=self.organization)
+        self.client.logout()
+        response = self.client.get(
+            path=reverse(self.detail_url_name, args=[team.id]),
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_create_team(self):
+        """Test the create view of the teams without authentication."""
+        team_data = TeamFactory.build()
+        payload = {
+            "name": team_data.name,
+            "description": team_data.description,
+            "slug": team_data.slug,
+        }
+        self.client.logout()
+        response = self.client.post(
+            path=self.list_url,
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_update_team(self):
+        """Test the update view of the teams without authentication."""
+        team = TeamFactory(organization=self.organization)
+
+        team_data = TeamFactory.build()
+        payload = {
+            "name": team_data.name,
+            "description": team_data.description,
+            "slug": team_data.slug,
+        }
+        self.client.logout()
+        response = self.client.put(
+            path=reverse(self.detail_url_name, args=[team.id]),
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_delete_team(self):
+        """Test the delete view of the teams without authentication."""
+        team = TeamFactory(organization=self.organization)
+        self.client.logout()
+        response = self.client.delete(
+            path=reverse(self.detail_url_name, args=[team.id]),
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_active_member_list_teams(self):
+        """Test the list view of the teams with not active member."""
+        member = MemberFactory.create(
+            organization=self.organization,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=member)
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_retrieve_team(self):
+        """Test the retrieve view of the teams with not active member."""
+        team = TeamFactory(organization=self.organization)
+        member = MemberFactory.create(
+            organization=self.organization,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=member)
+        response = self.client.get(
+            path=reverse(self.detail_url_name, args=[team.id]),
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_create_team(self):
+        """Test the create view of the teams with not active member."""
+        member = MemberFactory.create(
+            organization=self.organization,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=member)
+
+        team_data = TeamFactory.build()
+        payload = {
+            "name": team_data.name,
+            "description": team_data.description,
+            "slug": team_data.slug,
+        }
+
+        response = self.client.post(
+            path=self.list_url,
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_update_team(self):
+        """Test the update view of the teams with not active member."""
+        team = TeamFactory(organization=self.organization)
+        member = MemberFactory.create(
+            organization=self.organization,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=member)
+
+        team_data = TeamFactory.build()
+        payload = {
+            "name": team_data.name,
+            "description": team_data.description,
+            "slug": team_data.slug,
+        }
+
+        response = self.client.put(
+            path=reverse(self.detail_url_name, args=[team.id]),
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_delete_team(self):
+        """Test the delete view of the teams with not active member."""
+        team = TeamFactory(organization=self.organization)
+        member = MemberFactory.create(
+            organization=self.organization,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=member)
+
+        response = self.client.delete(
+            path=reverse(self.detail_url_name, args=[team.id]),
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)

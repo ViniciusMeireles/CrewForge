@@ -270,3 +270,117 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, http_status.HTTP_404_NOT_FOUND)
+
+    def test_not_authenticated_list_members(self):
+        """Test the list view of the members when not authenticated."""
+        self.client.logout()
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_retrieve_member(self):
+        """Test the retrieve view of the members when not authenticated."""
+        member = MemberFactory(organization=self.organization)
+        self.client.logout()
+        response = self.client.get(
+            path=reverse(self.detail_url_name, args=[member.id]),
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_update_member(self):
+        """Test the update view of the members when not authenticated."""
+        member = MemberFactory(organization=self.organization)
+        self.client.logout()
+        user_data = UserFactory.build()
+        member_data = MemberFactory.build(role=member.role)
+        payload = self._payload_for_member(user_data=user_data, member_data=member_data)
+        payload.pop("role")
+        response = self.client.put(
+            path=reverse(self.detail_url_name, args=[member.id]),
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_delete_member(self):
+        """Test the delete view of the members when not authenticated."""
+        member = MemberFactory(organization=self.organization)
+        self.client.logout()
+        response = self.client.delete(
+            path=reverse(self.detail_url_name, args=[member.id]),
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_update_role_member(self):
+        """Test the update role view of the members when not authenticated."""
+        member_to_update = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.MEMBER,
+        )
+        self.client.logout()
+        payload = {
+            "role": MemberRoleChoices.MANAGER,
+        }
+        response = self.client.patch(
+            path=reverse(self.update_role_url_name, args=[member_to_update.id]),
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_active_member_list_members(self):
+        """Test the list view of the members when the member is not active."""
+        member = MemberFactory(organization=self.organization, is_active=False)
+        self.client.force_authenticate(member=member)
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_retrieve_member(self):
+        """Test the retrieve view of the members when the member is not active."""
+        member = MemberFactory(organization=self.organization, is_active=False)
+        self.client.force_authenticate(member=member)
+        response = self.client.get(
+            path=reverse(self.detail_url_name, args=[member.id]),
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_update_member(self):
+        """Test the update view of the members when the member is not active."""
+        member = MemberFactory(organization=self.organization, is_active=False)
+        self.client.force_authenticate(member=member)
+        user_data = UserFactory.build()
+        member_data = MemberFactory.build(role=member.role)
+        payload = self._payload_for_member(user_data=user_data, member_data=member_data)
+        payload.pop("role")
+        response = self.client.put(
+            path=reverse(self.detail_url_name, args=[member.id]),
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_delete_member(self):
+        """Test the delete view of the members when the member is not active."""
+        member = MemberFactory(organization=self.organization, is_active=False)
+        self.client.force_authenticate(member=member)
+        response = self.client.delete(
+            path=reverse(self.detail_url_name, args=[member.id]),
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_update_role_member(self):
+        """Test the update role view of the members when the member is not active."""
+        member = MemberFactory(organization=self.organization, is_active=False)
+        member_to_update = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.MEMBER,
+        )
+        self.client.force_authenticate(member=member)
+        payload = {
+            "role": MemberRoleChoices.MANAGER,
+        }
+        response = self.client.patch(
+            path=reverse(self.update_role_url_name, args=[member_to_update.id]),
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)

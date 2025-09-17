@@ -3,7 +3,7 @@
 API service for managing accounts, teams, and permissions with comprehensive 
 organizational hierarchy support.
 
-<img width="2560" height="1080" alt="image" src="https://github.com/user-attachments/assets/33042194-f78f-4e94-ad03-441e77518a86" />
+<img width="2560" height="1080" alt="CrewForge API" src="https://github.com/user-attachments/assets/d07500c8-cea4-41e4-a6e6-74c12fd43792" />
 
 ## Table of Contents
 - [Overview](#overview-open_book)
