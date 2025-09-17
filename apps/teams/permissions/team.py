@@ -1,9 +1,10 @@
 from rest_framework import permissions
 
+from apps.accounts.permissions.member import IsActiveMember
 from apps.generics.utils.requests import get_member
 
 
-class TeamPermission(permissions.BasePermission):
+class TeamPermission(IsActiveMember):
     """
     Custom permission to check if the user has permission to perform actions on teams.
     """
