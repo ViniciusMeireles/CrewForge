@@ -121,7 +121,7 @@ class InvitationAPITestCase(APITestCaseMixin, APITestCase):
         self.assertEqual(response.status_code, http_status.HTTP_204_NO_CONTENT)
         self.assertEqual(Invitation.objects.filter_actives().filter(id=invitation.id).exists(), False)
 
-    def test_not_permission_invitation(self):
+    def test_not_permission_invitation_create(self):
         member = MemberFactory.create(
             organization=self.organization,
             role=MemberRoleChoices.MEMBER,
@@ -134,8 +134,6 @@ class InvitationAPITestCase(APITestCaseMixin, APITestCase):
             "role": invitation_data.role,
             "expired_at": invitation_data.expired_at,
         }
-
-        # Test create invitation
         response = self.client.post(
             path=self.list_url,
             data=payload,
@@ -143,7 +141,18 @@ class InvitationAPITestCase(APITestCaseMixin, APITestCase):
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
-        # Test update invitation
+    def test_not_permission_invitation_update(self):
+        member = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.MEMBER,
+        )
+        self.client.force_authenticate(member=member)
+        invitation_data = InvitationFactory.build()
+        payload = {
+            "email": invitation_data.email,
+            "role": invitation_data.role,
+            "expired_at": invitation_data.expired_at,
+        }
         invitation = InvitationFactory.create(organization=self.organization)
         url = reverse(
             self.detail_url_name,
@@ -156,7 +165,14 @@ class InvitationAPITestCase(APITestCaseMixin, APITestCase):
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
-        # Test delete invitation
+    def test_not_permission_invitation_delete(self):
+        member = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.MEMBER,
+        )
+        self.client.force_authenticate(member=member)
+
+        invitation = InvitationFactory.create(organization=self.organization)
         url = reverse(
             self.detail_url_name,
             kwargs={"key": invitation.key},
@@ -167,7 +183,13 @@ class InvitationAPITestCase(APITestCaseMixin, APITestCase):
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
-        # Test access another organization invitation
+    def test_not_permission_invitation_access_other_organization(self):
+        member = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.MEMBER,
+        )
+        self.client.force_authenticate(member=member)
+        invitation = InvitationFactory.create(organization=self.organization)
         organization2 = OrganizationFactory.create()
         self.client.force_authenticate(member=organization2.owner)
         response = self.client.get(
@@ -230,3 +252,166 @@ class InvitationAPITestCase(APITestCaseMixin, APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
+
+    def test_not_authenticated_list_invitations(self):
+        """Test the list view of the invitations without authentication."""
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_create_invitation(self):
+        """Test the create view of the invitations without authentication."""
+        self.client.force_authenticate(user=None)
+        invitation_data = InvitationFactory.build()
+        payload = {
+            "email": invitation_data.email,
+            "role": invitation_data.role,
+            "expired_at": invitation_data.expired_at,
+        }
+        response = self.client.post(
+            path=self.list_url,
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_retrieve_invitation(self):
+        """Test the retrieve view of the invitations without authentication."""
+        invitation = InvitationFactory.create(organization=self.organization)
+        self.client.force_authenticate(user=None)
+        url = reverse(
+            self.detail_url_name,
+            kwargs={"key": invitation.key},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_update_invitation(self):
+        """Test the update view of the invitations without authentication."""
+        invitation = InvitationFactory.create(organization=self.organization)
+        self.client.force_authenticate(user=None)
+        url = reverse(
+            self.detail_url_name,
+            kwargs={"key": invitation.key},
+        )
+        invitation_data = InvitationFactory.build()
+        payload = {
+            "email": invitation_data.email,
+            "role": MemberRoleChoices.ADMIN,
+            "expired_at": invitation_data.expired_at,
+            "organization": self.organization.id,
+        }
+        response = self.client.put(
+            path=url,
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_delete_invitation(self):
+        """Test the delete view of the invitations without authentication."""
+        invitation = InvitationFactory.create(organization=self.organization)
+        self.client.force_authenticate(user=None)
+        url = reverse(
+            self.detail_url_name,
+            kwargs={"key": invitation.key},
+        )
+        response = self.client.delete(
+            path=url,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_active_member_invitation_list(self):
+        """Test the list view of the invitations with not active member."""
+        member = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.ADMIN,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=member)
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_invitation_create(self):
+        """Test the create view of the invitations with not active member."""
+        member = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.ADMIN,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=member)
+        invitation_data = InvitationFactory.build()
+        payload = {
+            "email": invitation_data.email,
+            "role": invitation_data.role,
+            "expired_at": invitation_data.expired_at,
+        }
+        response = self.client.post(
+            path=self.list_url,
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_invitation_retrieve(self):
+        """Test the retrieve view of the invitations with not active member."""
+        member = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.ADMIN,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=member)
+        invitation = InvitationFactory.create(organization=self.organization)
+        url = reverse(
+            self.detail_url_name,
+            kwargs={"key": invitation.key},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_invitation_update(self):
+        """Test the update view of the invitations with not active member."""
+        member = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.ADMIN,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=member)
+        invitation = InvitationFactory.create(organization=self.organization)
+        url = reverse(
+            self.detail_url_name,
+            kwargs={"key": invitation.key},
+        )
+        invitation_data = InvitationFactory.build()
+        payload = {
+            "email": invitation_data.email,
+            "role": MemberRoleChoices.ADMIN,
+            "expired_at": invitation_data.expired_at,
+            "organization": self.organization.id,
+        }
+        response = self.client.put(
+            path=url,
+            data=payload,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_invitation_delete(self):
+        """Test the delete view of the invitations with not active member."""
+        member = MemberFactory.create(
+            organization=self.organization,
+            role=MemberRoleChoices.ADMIN,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=member)
+        invitation = InvitationFactory.create(organization=self.organization)
+        url = reverse(
+            self.detail_url_name,
+            kwargs={"key": invitation.key},
+        )
+        response = self.client.delete(
+            path=url,
+            format="json",
+        )
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)

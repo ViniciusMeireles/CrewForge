@@ -121,3 +121,113 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
             data={"role": TeamMemberRoleChoices.ADMIN},
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_authenticated_list_team_members(self):
+        """Test listing team members without authentication."""
+        self.client.force_authenticate(member=None)
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_retrieve_team_member(self):
+        """Test retrieving a team member without authentication."""
+        team_member = TeamMemberFactory.create(organization=self.organization)
+        self.client.force_authenticate(member=None)
+        response = self.client.get(reverse(self.detail_url_name, args=[team_member.id]))
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_create_team_member(self):
+        """Test creating a team member without authentication."""
+        team = TeamFactory.create(organization=self.organization)
+        member = MemberFactory.create(organization=self.organization)
+        team_member_data = TeamMemberFactory.build(team=team, member=member, organization=self.organization)
+        payload = {
+            "team": team_member_data.team.id,
+            "member": team_member_data.member.id,
+            "role": team_member_data.role,
+        }
+        self.client.force_authenticate(member=None)
+        response = self.client.post(self.list_url, data=payload)
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_update_team_member(self):
+        """Test updating a team member without authentication."""
+        team_member = TeamMemberFactory.create(organization=self.organization)
+        new_role = TeamMemberRoleChoices.ADMIN
+        payload = {
+            "role": new_role,
+        }
+        self.client.force_authenticate(member=None)
+        response = self.client.put(reverse(self.detail_url_name, args=[team_member.id]), data=payload)
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_authenticated_delete_team_member(self):
+        """Test deleting a team member without authentication."""
+        team_member = TeamMemberFactory.create(organization=self.organization)
+        self.client.force_authenticate(member=None)
+        response = self.client.delete(reverse(self.detail_url_name, args=[team_member.id]))
+        self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
+
+    def test_not_active_member_list_team_members(self):
+        """Test listing team members with an inactive member."""
+        inactive_member = MemberFactory.create(
+            organization=self.organization,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=inactive_member)
+        response = self.client.get(self.list_url)
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_retrieve_team_member(self):
+        """Test retrieving a team member with an inactive member."""
+        team_member = TeamMemberFactory.create(organization=self.organization)
+        inactive_member = MemberFactory.create(
+            organization=self.organization,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=inactive_member)
+        response = self.client.get(reverse(self.detail_url_name, args=[team_member.id]))
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_create_team_member(self):
+        """Test creating a team member with an inactive member."""
+        team = TeamFactory.create(organization=self.organization)
+        member = MemberFactory.create(organization=self.organization)
+        team_member_data = TeamMemberFactory.build(team=team, member=member, organization=self.organization)
+        payload = {
+            "team": team_member_data.team.id,
+            "member": team_member_data.member.id,
+            "role": team_member_data.role,
+        }
+        inactive_member = MemberFactory.create(
+            organization=self.organization,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=inactive_member)
+        response = self.client.post(self.list_url, data=payload)
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_update_team_member(self):
+        """Test updating a team member with an inactive member."""
+        team_member = TeamMemberFactory.create(organization=self.organization)
+        new_role = TeamMemberRoleChoices.ADMIN
+        payload = {
+            "role": new_role,
+        }
+        inactive_member = MemberFactory.create(
+            organization=self.organization,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=inactive_member)
+        response = self.client.put(reverse(self.detail_url_name, args=[team_member.id]), data=payload)
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
+
+    def test_not_active_member_delete_team_member(self):
+        """Test deleting a team member with an inactive member."""
+        team_member = TeamMemberFactory.create(organization=self.organization)
+        inactive_member = MemberFactory.create(
+            organization=self.organization,
+            is_active=False,
+        )
+        self.client.force_authenticate(member=inactive_member)
+        response = self.client.delete(reverse(self.detail_url_name, args=[team_member.id]))
+        self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
