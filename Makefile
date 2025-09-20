@@ -18,43 +18,43 @@ up:  ## Start containers in background mode
 down:  ## Stop and remove containers
 	docker compose down --remove-orphans
 
-logs:  ## Show django_api container logs
-	docker compose logs -f django_api
+logs:  ## Show crewforge-api container logs
+	docker compose logs -f crewforge-api
 
 uv_add:  ## Add a new library to the uv project
 	@if [ -z "$(lib)" ]; then \
 		echo "Error: lib variable is not set. Usage: make uv_add lib=<library_name>"; \
 		exit 1; \
 	fi
-	docker compose exec django_api uv add $$lib
+	docker compose exec crewforge-api uv add $$lib
 
 uv_upgrade:  ## Upgrade all libraries in the uv project
-	docker compose exec django_api uv sync --upgrade
+	docker compose exec crewforge-api uv sync --upgrade
 
 
 ##@ Development
 
 makemigrations:  ## Make migrations for the Django project
-	docker compose exec django_api uv run python manage.py makemigrations
+	docker compose exec crewforge-api uv run python manage.py makemigrations
 
 migrate:  ## Apply migrations for the Django project
-	docker compose exec django_api uv run python manage.py migrate
+	docker compose exec crewforge-api uv run python manage.py migrate
 
 createsuperuser:  ## Create a superuser for the Django project
-	docker compose exec django_api uv run python manage.py createsuperuser
+	docker compose exec crewforge-api uv run python manage.py createsuperuser
 
 shell_plus:  ## Open Django shell with all models imported
-	docker compose exec django_api uv run python manage.py shell_plus
+	docker compose exec crewforge-api uv run python manage.py shell_plus
 
 spectacular:  ## Generate OpenAPI schema for the Django project
-	docker compose exec django_api uv run python manage.py spectacular --color --file schema.yml
+	docker compose exec crewforge-api uv run python manage.py spectacular --color --file schema.yml
 
 format_code:  ## Format code with black
-	docker compose exec django_api uv run black .
-	docker compose exec django_api uv run isort .
+	docker compose exec crewforge-api uv run black .
+	docker compose exec crewforge-api uv run isort .
 
 test:  ## Run tests for the Django project
-	docker compose exec django_api uv run pytest
+	docker compose exec crewforge-api uv run pytest
 
 precommit: format_code spectacular test  ## Run code formatting and tests
 	@echo "Pre-commit checks passed."

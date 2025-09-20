@@ -15,7 +15,7 @@ services:
     networks:
       - crew_forge_network
 
-  django_api:
+  crewforge-api:
     build:
       context: .
       dockerfile: ./Dockerfile

@@ -125,12 +125,12 @@ and secure authentication mechanisms.
    
 5. Run database migrations:
    ```bash
-   docker compose exec django_api uv run python manage.py migrate
+   docker compose exec crewforge-api uv run python manage.py migrate
     ```
    
 6. (Optional) Create a superuser for admin access:
     ```bash
-    docker compose exec django_api uv run python manage.py createsuperuser
+    docker compose exec crewforge-api uv run python manage.py createsuperuser
    ```
    
 7. Access the application:
