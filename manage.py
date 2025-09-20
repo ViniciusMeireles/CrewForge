@@ -3,6 +3,8 @@
 import os
 import sys
 
+from observability.opentelemetry_config import *  # noqa
+
 
 def main():
     """Run administrative tasks."""

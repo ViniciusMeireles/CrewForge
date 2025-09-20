@@ -15,6 +15,27 @@ services:
     networks:
       - crew_forge_network
 
+  jaeger-server:
+    image: jaegertracing/jaeger:latest
+    ports:
+      - "16686:16686"
+    environment:
+      - LOG_LEVEL=debug
+    networks:
+      - crew_forge_network
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib
+    volumes:
+      - ./observability/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - 4317:4317
+      - 4318:4318
+    networks:
+      - crew_forge_network
+    depends_on:
+      - jaeger-server
+
   crewforge-api:
     build:
       context: .
@@ -26,6 +47,8 @@ services:
     depends_on:
       postgres_db:
         condition: service_healthy
+      otel-collector:
+        condition: service_started
     env_file:
       - .env
     restart: unless-stopped

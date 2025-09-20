@@ -13,6 +13,8 @@ dependencies = [
     "drf-spectacular>=0.28.0",
     "drf-spectacular-sidecar>=2025.8.1",
     "gunicorn>=23.0.0",
+    "opentelemetry-exporter-otlp>=1.37.0",
+    "opentelemetry-instrumentation-django>=0.58b0",
     "pillow>=11.3.0",
     "psycopg>=3.2.9",
     "whitenoise>=6.9.0",
@@ -63,6 +65,7 @@ branch = true
 omit = [
     "*/commands/*",
     "*/tests/*",
+    "*/observability/*",
     "*/__init__.py",
     "config/settings/local.py",
     "config/settings/production.py",
