@@ -30,6 +30,9 @@ services:
       - "9090:9090"
     volumes:
       - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      otel-collector:
+        condition: service_started
     networks:
       - crew_forge_network
     restart: unless-stopped
