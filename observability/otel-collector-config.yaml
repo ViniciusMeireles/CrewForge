@@ -5,6 +5,11 @@ receivers:
         endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    send_batch_size: 8192
+
 exporters:
   debug:
     verbosity: detailed
@@ -12,14 +17,22 @@ exporters:
     endpoint: jaeger-server:4317
     tls:
       insecure: true
+  prometheus:
+    endpoint: 0.0.0.0:9464
+    namespace: default
+    metric_expiration: 5m
+
 service:
   pipelines:
     traces:
       receivers: [otlp]
+      processors: [batch]
       exporters: [debug,otlp/jaeger]
     metrics:
       receivers: [otlp]
-      exporters: [debug]
+      processors: [batch]
+      exporters: [debug,prometheus]
     logs:
       receivers: [otlp]
+      processors: [batch]
       exporters: [debug]
