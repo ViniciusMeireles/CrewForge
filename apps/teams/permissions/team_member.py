@@ -14,8 +14,6 @@ class TeamMemberPermission(IsActiveMember):
             return False
 
         auth_member = get_member(request)
-        return (
-            auth_member.id == obj.member_id
-            or request.method in permissions.SAFE_METHODS
-            or auth_member.has_manager_permission
+        return request.method in permissions.SAFE_METHODS or (
+            auth_member and (auth_member.id == obj.member_id or auth_member.has_manager_permission)
         )

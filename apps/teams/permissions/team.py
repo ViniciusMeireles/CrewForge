@@ -10,8 +10,9 @@ class TeamPermission(IsActiveMember):
     """
 
     def has_permission(self, request, view):
+        auth_member = get_member(request)
         return super().has_permission(request, view) and (
-            request.method in permissions.SAFE_METHODS or get_member(request).has_manager_permission
+            request.method in permissions.SAFE_METHODS or (auth_member and auth_member.has_manager_permission)
         )
 
     def has_object_permission(self, request, view, obj):
@@ -24,7 +25,8 @@ class TeamPermission(IsActiveMember):
         elif request.method in permissions.SAFE_METHODS:
             return True
 
-        auth_member = get_member(request)
+        if not (auth_member := get_member(request)):
+            return False
         if auth_member.has_manager_permission:
             return True
 

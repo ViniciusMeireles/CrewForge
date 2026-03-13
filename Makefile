@@ -15,6 +15,9 @@ build:  ## Build Docker images
 up:  ## Start containers in background mode
 	docker compose up -d
 
+up_db:  ## Start only the database container in background mode
+	docker compose up postgres_db -d
+
 down:  ## Stop and remove containers
 	docker compose down --remove-orphans
 

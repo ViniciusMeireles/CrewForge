@@ -3,29 +3,31 @@ name = "crew-forge"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
-    "dj-database-url>=3.0.1",
-    "django-cors-headers>=4.7.0",
-    "django-filter>=25.1",
+    "dj-database-url>=3.1.2",
+    "django-cors-headers>=4.9.0",
+    "django-filter>=25.2",
     "djangorestframework>=3.16.1",
     "djangorestframework-simplejwt>=5.5.1",
-    "drf-spectacular>=0.28.0",
-    "drf-spectacular-sidecar>=2025.8.1",
-    "gunicorn>=23.0.0",
-    "pillow>=11.3.0",
-    "psycopg>=3.2.9",
-    "whitenoise>=6.9.0",
+    "drf-spectacular>=0.29.0",
+    "drf-spectacular-sidecar>=2026.3.1",
+    "gunicorn>=25.1.0",
+    "pillow>=12.1.1",
+    "psycopg>=3.3.3",
+    "python-dotenv>=1.2.2",
+    "whitenoise>=6.12.0",
 ]
 
 [dependency-groups]
 dev = [
-    "black>=25.1.0",
+    "black>=26.3.1",
     "django-extensions>=4.1",
+    "djangorestframework-stubs>=3.16.8",
     "factory-boy>=3.3.3",
-    "isort>=6.0.1",
+    "isort>=8.0.1",
     "pytest-cov>=7.0.0",
-    "pytest-django>=4.11.1",
+    "pytest-django>=4.12.0",
 ]
 
 [tool.black]
@@ -35,11 +37,13 @@ line-length = 120
 [tool.isort]
 profile = "black"
 line_length = 120
-skip = [".venv", "migrations", "__pycache__"]
+skip = [".venv", ".docker_venv", "migrations", "__pycache__"]
 skip_glob = [
     "**/migrations/**",
     "**/__pycache__/**",
-    "**/__init__.py"
+    "**/__init__.py",
+    "**/.docker_venv/**",
+    "**/.venv/**",
 ]
 multi_line_output=3
 include_trailing_comma=true

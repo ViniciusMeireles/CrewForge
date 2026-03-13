@@ -17,3 +17,4 @@ wheels/
 
 # Virtual environments
 .venv
+.docker_venv
