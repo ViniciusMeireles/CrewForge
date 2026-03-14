@@ -138,15 +138,6 @@ and secure authentication mechanisms.
    - :gear: Admin Panel: `http://localhost:8000/admin/`
 
 
-## Demo / Deployed Instance :earth_americas:
-A live demo of CrewForge is available at: [https://crewforge.onrender.com/](https://crewforge.onrender.com/)
-
-Important — Demo instance limitations:
-
-- **Note**: This demo deployment **does NOT** send password recovery emails. Password reset requests initiated on 
-this deployed instance will not result in delivered emails. 
-
-
 ## Usage :computer:
 - The Swagger UI for API documentation is available at `http://localhost:8000/api/schema/swagger-ui/`.
 - The admin panel is accessible at `http://localhost:8000/admin/`.
