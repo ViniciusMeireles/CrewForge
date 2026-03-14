@@ -3,6 +3,8 @@ services:
     image: postgres:18
     volumes:
       - postgres_data_crew_forge_pg18:/var/lib/postgresql/18/data
+    environment:
+      PGDATA: /var/lib/postgresql/18/data
     env_file:
       - .env
     ports:
@@ -35,6 +37,7 @@ services:
 
 volumes:
   postgres_data_crew_forge_pg18:
+    name: postgres_data_crew_forge_pg18
 
 networks:
   crew_forge_network:
