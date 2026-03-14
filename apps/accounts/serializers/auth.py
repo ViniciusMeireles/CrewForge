@@ -107,7 +107,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         try:
             uid_decoded = force_str(urlsafe_base64_decode(uid))
             user = User.objects.get(pk=uid_decoded, is_active=True)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        except TypeError, ValueError, OverflowError, User.DoesNotExist:
             raise serializers.ValidationError(_("Invalid UID."))
 
         if not default_token_generator.check_token(user, token):

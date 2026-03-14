@@ -20,7 +20,11 @@ class TeamMemberSerializer(ModelSerializerMixin, serializers.ModelSerializer):
         if value:
             if self.instance and value != self.instance.team:
                 raise serializers.ValidationError(_("Not allowed to change the team."))
-            if not value.is_team_member(self.auth_member) and not self.auth_member.has_manager_permission:
+            if (
+                self.auth_member
+                and not value.is_team_member(self.auth_member)
+                and not self.auth_member.has_manager_permission
+            ):
                 raise serializers.ValidationError(_("You are not allowed to add a member to this team."))
         return value
 
@@ -33,7 +37,7 @@ class TeamMemberSerializer(ModelSerializerMixin, serializers.ModelSerializer):
     def run_validation(self, initial_data=empty):
         """Run validation on the serializer data and "recreate" the instance if needed."""
         team_member = None
-        if initial_data and not self.instance:
+        if initial_data and isinstance(initial_data, dict) and not self.instance:
             team_member = TeamMember.objects.filter(
                 team=initial_data.get('team'),
                 member=initial_data.get('member'),

@@ -15,8 +15,14 @@ build:  ## Build Docker images
 up:  ## Start containers in background mode
 	docker compose up -d
 
+up_db:  ## Start only the database container in background mode
+	docker compose up postgres_db -d
+
 down:  ## Stop and remove containers
 	docker compose down --remove-orphans
+
+down_api:  ## Down only django_api container
+	docker compose down django_api --remove-orphans
 
 logs:  ## Show django_api container logs
 	docker compose logs -f django_api

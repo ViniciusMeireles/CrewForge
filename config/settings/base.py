@@ -6,6 +6,10 @@ from pathlib import Path
 from django.utils.translation import gettext_lazy
 
 import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -71,7 +75,7 @@ MIDDLEWARE_THIRD_PARTY = [
 
 MIDDLEWARE_LOCAL = []
 
-MIDDLEWARE = MIDDLEWARE_DJANGO + MIDDLEWARE_THIRD_PARTY + MIDDLEWARE_LOCAL
+MIDDLEWARE = MIDDLEWARE_THIRD_PARTY + MIDDLEWARE_DJANGO + MIDDLEWARE_LOCAL
 
 ROOT_URLCONF = 'config.urls'
 
