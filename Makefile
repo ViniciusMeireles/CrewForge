@@ -21,6 +21,9 @@ up_db:  ## Start only the database container in background mode
 down:  ## Stop and remove containers
 	docker compose down --remove-orphans
 
+down_api:  ## Down only django_api container
+	docker compose down django_api --remove-orphans
+
 logs:  ## Show django_api container logs
 	docker compose logs -f django_api
 
