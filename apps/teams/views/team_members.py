@@ -7,7 +7,7 @@ from rest_framework import viewsets
 
 from apps.generics.utils.models import get_verbose_name
 from apps.generics.utils.schema import extend_schema_model_view_set
-from apps.generics.views.mixins import ModelViewSetMixin
+from apps.generics.views.mixins import ModelViewSetMixin, OrganizationScopedViewSetMixin
 from apps.teams.filters.team_member import TeamMemberFilter
 from apps.teams.models.team_member import TeamMember
 from apps.teams.permissions.team_member import TeamMemberPermission
@@ -29,7 +29,9 @@ from apps.teams.serializers.team_member import (
         },
     ),
 )
-class TeamMemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
+class TeamMemberViewSet(
+    OrganizationScopedViewSetMixin, ModelViewSetMixin, viewsets.ModelViewSet
+):
     serializer_class = TeamMemberSerializer
     queryset = TeamMember.objects.all()
     http_method_names = ['get', 'post', 'put', 'delete', 'options']
@@ -38,18 +40,12 @@ class TeamMemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
     filter_backends = [backends.DjangoFilterBackend]
     label_expression = TeamMember.label_expression()
 
-    def get_queryset(self):
-        """Get the queryset for the view."""
-        return (
-            super()
-            .get_queryset()
-            .filter(
-                team__organization_id=self.auth_organization_id,
-                is_active=True,
-                team__is_active=True,
-                member__is_active=True,
-            )
-        )
+    organization_filter = 'team__organization_id'
+    base_filters = {
+        'is_active': True,
+        'team__is_active': True,
+        'member__is_active': True,
+    }
 
     def get_serializer_class(self):
         """Get the serializer class for the view."""

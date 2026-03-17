@@ -1,10 +1,10 @@
 from rest_framework import permissions
 
-from apps.accounts.permissions.member import IsActiveMember
+from apps.generics.permissions import OrganizationScopedPermission
 from apps.generics.utils.requests import get_member
 
 
-class TeamPermission(IsActiveMember):
+class TeamPermission(OrganizationScopedPermission):
     """
     Custom permission to check if the user has permission to perform actions on teams.
     """
@@ -17,13 +17,9 @@ class TeamPermission(IsActiveMember):
         )
 
     def has_object_permission(self, request, view, obj):
-        if (
-            not super().has_object_permission(request, view, obj)
-            or not (organization_id := request.session.get('organization_id'))
-            or obj.organization_id != organization_id
-        ):
+        if not super().has_object_permission(request, view, obj):
             return False
-        elif request.method in permissions.SAFE_METHODS:
+        if request.method in permissions.SAFE_METHODS:
             return True
 
         if not (auth_member := get_member(request)):
