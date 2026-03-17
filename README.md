@@ -18,7 +18,6 @@ organizational hierarchy support.
     - [Authentication Module](#authentication-module-key)
 - [Stack](#stack-hammer_and_wrench)
 - [Installation](#installation-inbox_tray)
-- [Demo / Deployed Instance](#demo--deployed-instance-earth_americas)
 - [Usage](#usage-computer)
 - [API Documentation](#api-documentation-books)
 - [Security Features](#security-features-shield)
