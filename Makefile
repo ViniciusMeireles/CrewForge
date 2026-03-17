@@ -64,3 +64,34 @@ test:  ## Run tests for the Django project
 
 precommit: format_code spectacular test  ## Run code formatting and tests
 	@echo "Pre-commit checks passed."
+
+
+##@ Local venv development
+
+l_uv_upgrade:  ## Upgrade all libraries in the uv project
+	uv sync --upgrade
+
+l_makemigrations:  ## Make migrations for the Django project
+	uv run python manage.py makemigrations
+
+l_migrate:  ## Apply migrations for the Django project
+	uv run python manage.py migrate
+
+l_createsuperuser:  ## Create a superuser for the Django project
+	uv run python manage.py createsuperuser
+
+l_shell_plus:  ## Open Django shell with all models imported
+	uv run python manage.py shell_plus
+
+l_spectacular:  ## Generate OpenAPI schema for the Django project
+	uv run python manage.py spectacular --color --file schema.yml
+
+l_format_code:  ## Format code with ruff
+	uv run ruff check . --fix
+	uv run ruff format .
+
+l_test:  ## Run tests for the Django project
+	uv run --env-file test.env pytest
+
+l_precommit: l_format_code l_spectacular l_test  ## Run code formatting and tests
+	@echo "Pre-commit checks passed."
