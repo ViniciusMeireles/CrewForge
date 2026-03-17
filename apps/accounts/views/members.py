@@ -1,6 +1,5 @@
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
 from django_filters.rest_framework import backends
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
 from rest_framework import status as http_status
@@ -37,7 +36,10 @@ from apps.generics.views.mixins import ModelViewSetMixin
             ),
         ],
         tags=Member.schema_tags(),
-        description=_("Create a new %(name)s with an invitation." % {"name": get_verbose_name(Member)}),
+        description=_(
+            'Create a new %(name)s with an invitation.'
+            % {'name': get_verbose_name(Member)}
+        ),
     ),
     # Create route is excluded
     create=extend_schema(exclude=True),
@@ -48,7 +50,9 @@ from apps.generics.views.mixins import ModelViewSetMixin
             http_status.HTTP_400_BAD_REQUEST: OpenApiTypes.NONE,
         },
         tags=Member.schema_tags(),
-        description=_("Update the role of a %(name)s." % {"name": get_verbose_name(Member)}),
+        description=_(
+            'Update the role of a %(name)s.' % {'name': get_verbose_name(Member)}
+        ),
     ),
     update=extend_schema(
         request=MemberUpdateSerializer,
@@ -57,12 +61,12 @@ from apps.generics.views.mixins import ModelViewSetMixin
             http_status.HTTP_400_BAD_REQUEST: OpenApiTypes.NONE,
         },
         tags=Member.schema_tags(),
-        description=_("Update a %(name)s." % {"name": get_verbose_name(Member)}),
+        description=_('Update a %(name)s.' % {'name': get_verbose_name(Member)}),
     ),
 )
 class MemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
     queryset = Member.objects.all()
-    http_method_names = ["get", "post", "put", "patch", "delete", "options"]
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'options']
     permission_classes = [MemberPermission]
     filterset_class = MemberFilter
     filter_backends = [backends.DjangoFilterBackend]
@@ -81,11 +85,11 @@ class MemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """Get the serializer class for the view."""
-        if self.action in ["update", "partial_update"]:
+        if self.action in ['update', 'partial_update']:
             return MemberUpdateSerializer
-        elif self.action == "update_role":
+        elif self.action == 'update_role':
             return MemberRoleUpdateSerializer
-        elif self.action == "create_with_invite":
+        elif self.action == 'create_with_invite':
             return MemberWithInviteCreateSerializer
         return MemberModelSerializer
 
@@ -93,7 +97,7 @@ class MemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
         """Get the invitation object."""
         return (
             Invitation.objects.filter(
-                key=self.kwargs.get("invitation_key"),
+                key=self.kwargs.get('invitation_key'),
                 is_active=True,
                 is_expired=False,
                 is_accepted=False,
@@ -107,22 +111,33 @@ class MemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Deprecated create action."""
         return Response(
-            data={"detail": _("This route is not available anymore. Use the `create_with_invite` route instead.")},
+            data={
+                'detail': _(
+                    'This route is not available anymore. Use the `create_with_invite` '
+                    'route instead.'
+                )
+            },
             status=http_status.HTTP_405_METHOD_NOT_ALLOWED,
         )
 
-    @action(detail=False, methods=["post"], url_path="create-with-invite/(?P<invitation_key>[^/.]+)")
+    @action(
+        detail=False,
+        methods=['post'],
+        url_path='create-with-invite/(?P<invitation_key>[^/.]+)',
+    )
     def create_with_invite(self, request, *args, **kwargs):
         """Create a new member."""
         if not (invitation := self.get_invitation()):
             return Response(
-                data={"detail": _("Invitation not found or expired.")},
+                data={'detail': _('Invitation not found or expired.')},
                 status=http_status.HTTP_404_NOT_FOUND,
             )
 
         is_acceptable, message = invitation.is_acceptable()
         if not is_acceptable:
-            return Response({"detail": message}, status=http_status.HTTP_400_BAD_REQUEST)
+            return Response(
+                data={'detail': message}, status=http_status.HTTP_400_BAD_REQUEST
+            )
 
         return super().create(request, *args, **kwargs)
 
@@ -132,8 +147,8 @@ class MemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
         if invitation := self.get_invitation():
             invitation.accept(member=member, check=False)
 
-    @action(detail=True, methods=["patch"], url_path="update-role")
+    @action(detail=True, methods=['patch'], url_path='update-role')
     def update_role(self, request, *args, **kwargs):
         """Update the role of a member."""
-        kwargs.update({"partial": True})
+        kwargs.update({'partial': True})
         return self.update(request, *args, **kwargs)

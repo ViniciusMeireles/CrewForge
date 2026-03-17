@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import update_last_login
 from django.utils.translation import gettext as _
-
 from rest_framework import serializers
 from rest_framework.serializers import SerializerMetaclass
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -18,11 +17,17 @@ class ValidateRoleSerializerMixin:
     def validate_role(self, value):
         """Validate that the role is one of the allowed roles."""
         if self.instance == self.auth_member:
-            raise serializers.ValidationError(_("Not allowed to change your own role."))
-        if (value == MemberRoleChoices.OWNER and not self.auth_member.has_owner_permission) or (
-            value == MemberRoleChoices.ADMIN and not self.auth_member.has_admin_permission
+            raise serializers.ValidationError(_('Not allowed to change your own role.'))
+        if (
+            value == MemberRoleChoices.OWNER
+            and not self.auth_member.has_owner_permission
+        ) or (
+            value == MemberRoleChoices.ADMIN
+            and not self.auth_member.has_admin_permission
         ):
-            raise serializers.ValidationError(_("Not allowed to set the %(role)s role.") % {"role": value})
+            raise serializers.ValidationError(
+                _('Not allowed to set the %(role)s role.') % {'role': value}
+            )
         return value
 
 

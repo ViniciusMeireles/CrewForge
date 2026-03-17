@@ -8,23 +8,23 @@ from apps.teams.managers.team_member import TeamMemberManager
 
 class TeamMember(BaseModel):
     team = models.ForeignKey(
-        to="teams.Team",
+        to='teams.Team',
         on_delete=models.CASCADE,
         related_name='members',
-        verbose_name=_("Team"),
-        help_text=_("Team to which this member belongs"),
+        verbose_name=_('Team'),
+        help_text=_('Team to which this member belongs'),
     )
     member = models.ForeignKey(
-        to="accounts.Member",
+        to='accounts.Member',
         on_delete=models.CASCADE,
         related_name='teams',
-        verbose_name=_("Member"),
-        help_text=_("Member of the team"),
+        verbose_name=_('Member'),
+        help_text=_('Member of the team'),
     )
     role = models.CharField(
         max_length=20,
-        verbose_name=_("Role"),
-        help_text=_("Role of the member in the team"),
+        verbose_name=_('Role'),
+        help_text=_('Role of the member in the team'),
         choices=TeamMemberRoleChoices.choices,
         default=TeamMemberRoleChoices.MEMBER,
     )
@@ -33,12 +33,12 @@ class TeamMember(BaseModel):
 
     class Meta:
         ordering = ['-id']
-        verbose_name = _("Team Member")
-        verbose_name_plural = _("Team Members")
+        verbose_name = _('Team Member')
+        verbose_name_plural = _('Team Members')
         unique_together = ['team', 'member']
 
     def __str__(self):
-        return f"{self.member} - {self.team}"
+        return f'{self.member} - {self.team}'
 
     @property
     def is_owner(self) -> bool:
@@ -79,4 +79,4 @@ class TeamMember(BaseModel):
         """
         from apps.accounts.models.member import Member
 
-        return Member.label_expression(outer_ref="member")
+        return Member.label_expression(outer_ref='member')

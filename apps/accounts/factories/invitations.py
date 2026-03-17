@@ -9,13 +9,13 @@ from apps.generics.factories.mixins import ModelFactoryMixin
 
 
 class InvitationFactory(ModelFactoryMixin, DjangoModelFactory):
-    email = factory.Sequence(lambda n: f'unit_test_invite{n}@horologe.com')
+    email = factory.Sequence(lambda n: f'unit_test_invite{n}@example.com')
     is_accepted = False
     is_expired = False
     expired_at = factory.Faker('date_time', tzinfo=timezone.utc)
     role = MemberRoleChoices.MEMBER
     organization = factory.SubFactory(
-        factory="apps.accounts.factories.organizations.OrganizationFactory",
+        factory='apps.accounts.factories.organizations.OrganizationFactory',
     )
 
     class Meta:

@@ -25,5 +25,5 @@ class OrganizationPermission(permissions.BasePermission):
             and auth_member.has_owner_permission
             and auth_member.organization == obj
             or request.method in permissions.SAFE_METHODS
-            or (view.action == "login" and is_member)
+            or (view.action == 'login' and is_member)
         )

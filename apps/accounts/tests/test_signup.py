@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-
 from rest_framework import status as http_status
 from rest_framework.test import APITestCase
 
@@ -15,7 +14,7 @@ User = get_user_model()
 class SignupAPITestCase(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.url_name = "accounts:signup-list"
+        cls.url_name = 'accounts:signup-list'
         cls.url = reverse(cls.url_name)
 
     def test_create_account(self):
@@ -25,38 +24,48 @@ class SignupAPITestCase(APITestCase):
         member_data = MemberFactory.build()
 
         payload = {
-            "user": {
-                "username": user_data.username,
-                "email": user_data.email,
-                "first_name": user_data.first_name,
-                "last_name": user_data.last_name,
-                "password": user_data.password,
+            'user': {
+                'username': user_data.username,
+                'email': user_data.email,
+                'first_name': user_data.first_name,
+                'last_name': user_data.last_name,
+                'password': user_data.password,
             },
-            "organization": {
-                "name": organization_data.name,
-                "slug": organization_data.slug,
+            'organization': {
+                'name': organization_data.name,
+                'slug': organization_data.slug,
             },
-            "nickname": member_data.nickname,
+            'nickname': member_data.nickname,
         }
 
         response = self.client.post(
             path=self.url,
             data=payload,
-            format="json",
+            format='json',
         )
 
         self.assertEqual(response.status_code, http_status.HTTP_201_CREATED)
-        self.assertEqual(response.data.get("user").get("username"), user_data.username)
-        self.assertEqual(response.data.get("user").get("email"), user_data.email)
-        self.assertEqual(response.data.get("user").get("first_name"), user_data.first_name)
-        self.assertEqual(response.data.get("user").get("last_name"), user_data.last_name)
-        self.assertEqual(response.data.get("organization").get("name"), organization_data.name)
-        self.assertEqual(response.data.get("organization").get("slug"), organization_data.slug)
-        self.assertEqual(response.data.get("nickname"), member_data.nickname)
-        self.assertEqual(response.data.get("role"), MemberRoleChoices.OWNER)
-        self.assertIsNotNone(response.data.get("access"))
-        self.assertIsNotNone(response.data.get("refresh"))
-        user = User.objects.get_or_none(**{User.USERNAME_FIELD: getattr(user_data, User.USERNAME_FIELD)})
+        self.assertEqual(response.data.get('user').get('username'), user_data.username)
+        self.assertEqual(response.data.get('user').get('email'), user_data.email)
+        self.assertEqual(
+            response.data.get('user').get('first_name'), user_data.first_name
+        )
+        self.assertEqual(
+            response.data.get('user').get('last_name'), user_data.last_name
+        )
+        self.assertEqual(
+            response.data.get('organization').get('name'), organization_data.name
+        )
+        self.assertEqual(
+            response.data.get('organization').get('slug'), organization_data.slug
+        )
+        self.assertEqual(response.data.get('nickname'), member_data.nickname)
+        self.assertEqual(response.data.get('role'), MemberRoleChoices.OWNER)
+        self.assertIsNotNone(response.data.get('access'))
+        self.assertIsNotNone(response.data.get('refresh'))
+        user = User.objects.get_or_none(
+            **{User.USERNAME_FIELD: getattr(user_data, User.USERNAME_FIELD)}
+        )
         self.assertIsNotNone(user)
         self.assertIsNotNone(user.password)
 
@@ -67,28 +76,28 @@ class SignupAPITestCase(APITestCase):
         member_data = MemberFactory.build()
 
         payload = {
-            "user": {
-                "username": existing_user.username,
-                "email": existing_user.email,
-                "first_name": existing_user.first_name,
-                "last_name": existing_user.last_name,
-                "password": "passWord*123",
+            'user': {
+                'username': existing_user.username,
+                'email': existing_user.email,
+                'first_name': existing_user.first_name,
+                'last_name': existing_user.last_name,
+                'password': 'passWord*123',
             },
-            "organization": {
-                "name": organization_data.name,
-                "slug": organization_data.slug,
+            'organization': {
+                'name': organization_data.name,
+                'slug': organization_data.slug,
             },
-            "nickname": member_data.nickname,
+            'nickname': member_data.nickname,
         }
 
         response = self.client.post(
             path=self.url,
             data=payload,
-            format="json",
+            format='json',
         )
 
         self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
-        self.assertIn("user", response.data)
+        self.assertIn('user', response.data)
 
     def test_create_account_empty_password(self):
         """Test the create view of the signup with an empty password."""
@@ -97,26 +106,26 @@ class SignupAPITestCase(APITestCase):
         member_data = MemberFactory.build()
 
         payload = {
-            "user": {
-                "username": user_data.username,
-                "email": user_data.email,
-                "first_name": user_data.first_name,
-                "last_name": user_data.last_name,
-                "password": "",
+            'user': {
+                'username': user_data.username,
+                'email': user_data.email,
+                'first_name': user_data.first_name,
+                'last_name': user_data.last_name,
+                'password': '',
             },
-            "organization": {
-                "name": organization_data.name,
-                "slug": organization_data.slug,
+            'organization': {
+                'name': organization_data.name,
+                'slug': organization_data.slug,
             },
-            "nickname": member_data.nickname,
+            'nickname': member_data.nickname,
         }
 
         response = self.client.post(
             path=self.url,
             data=payload,
-            format="json",
+            format='json',
         )
 
         self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
-        self.assertIn("user", response.data)
-        self.assertIn("password", response.data["user"])
+        self.assertIn('user', response.data)
+        self.assertIn('password', response.data['user'])

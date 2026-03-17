@@ -2,10 +2,10 @@ openapi: 3.0.3
 info:
   title: CrewForge API
   version: 1.0.0
-  description: "API service for managing accounts, teams, and permissions with comprehensive
-    organizational hierarchy \n        support.\n        CrewForge provides a comprehensive
-    foundation for building applications requiring sophisticated organizational \n
-    \       structures, team management, and permission systems with enterprise-grade
+  description: "API service for managing accounts, teams, and permissions with comprehensive\n
+    \       organizational hierarchy support.\n        CrewForge provides a comprehensive
+    foundation for building applications\n        requiring sophisticated organizational
+    structures, team management, and\n        permission systems with enterprise-grade
     security and scalability.\n    "
 paths:
   /api/accounts/invitations/:

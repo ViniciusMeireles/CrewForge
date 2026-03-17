@@ -1,6 +1,8 @@
 FROM python:slim AS builder
 LABEL authors="Vinicius Meireles"
 ARG USER_NAME=app_user
+ARG USER_ID=1000
+ARG GROUP_ID=1000
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -23,6 +25,12 @@ ADD . /app
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-install-project --no-dev --no-editable
+
+RUN groupadd -g ${GROUP_ID} ${USER_NAME} \
+    && useradd -u ${USER_ID} -g ${GROUP_ID} -d /app -s /bin/sh -m ${USER_NAME}
+
+RUN chown -R ${USER_NAME}:${USER_NAME} /app /uv /uvx /bin || true
+USER ${USER_NAME}
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["/app/run.sh"]

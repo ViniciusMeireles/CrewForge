@@ -42,7 +42,7 @@ class Invitation(BaseModel):
         help_text=_('User role in the organization'),
     )
     organization = models.ForeignKey(
-        to="accounts.Organization",
+        to='accounts.Organization',
         on_delete=models.CASCADE,
         related_name='invitations',
         verbose_name=_('Organization'),
@@ -51,14 +51,14 @@ class Invitation(BaseModel):
         blank=False,
     )
     key = models.UUIDField(
-        verbose_name=_("Key"),
-        help_text=_("Key for the invitation"),
+        verbose_name=_('Key'),
+        help_text=_('Key for the invitation'),
     )
     member = models.OneToOneField(
-        to="accounts.Member",
+        to='accounts.Member',
         on_delete=models.CASCADE,
-        verbose_name=_("Member"),
-        help_text=_("Member associated with the invitation"),
+        verbose_name=_('Member'),
+        help_text=_('Member associated with the invitation'),
         null=True,
         blank=True,
     )
@@ -83,14 +83,16 @@ class Invitation(BaseModel):
         :return: Tuple of boolean and message.
         """
         if self.is_expired:
-            return False, _('Invitation is expired')
+            return False, str(_('Invitation is expired'))
         elif self.expired_at and self.expired_at <= timezone.now():
             self.is_expired = True
             self.save()
-            return False, _('Invitation is expired')
-        elif (user := self.get_user()) and self.organization.members.filter(user=user).exists():
-            return False, _('User is already a member of the organization')
-        return True, ""
+            return False, str(_('Invitation is expired'))
+        elif (user := self.get_user()) and self.organization.members.filter(
+            user=user
+        ).exists():
+            return False, str(_('User is already a member of the organization'))
+        return True, ''
 
     def accept(self, member, check: bool = True):
         """
@@ -118,7 +120,9 @@ class Invitation(BaseModel):
     def save(self, *args, **kwargs):
         if not self.key:
             self.key = uuid.uuid4()
-            if (update_fields := kwargs.pop('update_fields', None)) and 'key' not in update_fields:
+            if (
+                update_fields := kwargs.pop('update_fields', None)
+            ) and 'key' not in update_fields:
                 update_fields.append('key')
                 kwargs['update_fields'] = update_fields
         return super().save(*args, **kwargs)

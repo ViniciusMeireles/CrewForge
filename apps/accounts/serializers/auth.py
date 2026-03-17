@@ -5,11 +5,13 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.translation import gettext as _
-
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 
-from apps.accounts.serializers.mixins import UserTokenMixin, UserTokenSerializerMetaclass
+from apps.accounts.serializers.mixins import (
+    UserTokenMixin,
+    UserTokenSerializerMetaclass,
+)
 from apps.accounts.serializers.user import UserReadySerializer
 
 User = get_user_model()
@@ -34,7 +36,9 @@ class UserSerializerMixin(UserMixin, metaclass=UserSerializerMetaclass):
     pass
 
 
-class TokenWithUserSerializerMetaclass(UserSerializerMetaclass, UserTokenSerializerMetaclass):
+class TokenWithUserSerializerMetaclass(
+    UserSerializerMetaclass, UserTokenSerializerMetaclass
+):
     pass
 
 
@@ -81,8 +85,10 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 
         try:
             user = User.objects.get(email=email, is_active=True)
-        except User.DoesNotExist:
-            raise serializers.ValidationError(_("No user found with this email address."))
+        except User.DoesNotExist as err:
+            raise serializers.ValidationError(
+                _('No user found with this email address.')
+            ) from err
 
         self._uid = urlsafe_base64_encode(force_bytes(user.pk))
         self._token = default_token_generator.make_token(user)
@@ -107,10 +113,10 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         try:
             uid_decoded = force_str(urlsafe_base64_decode(uid))
             user = User.objects.get(pk=uid_decoded, is_active=True)
-        except TypeError, ValueError, OverflowError, User.DoesNotExist:
-            raise serializers.ValidationError(_("Invalid UID."))
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist) as err:
+            raise serializers.ValidationError(_('Invalid UID.')) from err
 
         if not default_token_generator.check_token(user, token):
-            raise serializers.ValidationError(_("Invalid token."))
+            raise serializers.ValidationError(_('Invalid token.'))
         self.user = user
         return attrs

@@ -12,13 +12,14 @@ class TeamPermission(IsActiveMember):
     def has_permission(self, request, view):
         auth_member = get_member(request)
         return super().has_permission(request, view) and (
-            request.method in permissions.SAFE_METHODS or (auth_member and auth_member.has_manager_permission)
+            request.method in permissions.SAFE_METHODS
+            or (auth_member and auth_member.has_manager_permission)
         )
 
     def has_object_permission(self, request, view, obj):
         if (
             not super().has_object_permission(request, view, obj)
-            or not (organization_id := request.session.get("organization_id"))
+            or not (organization_id := request.session.get('organization_id'))
             or obj.organization_id != organization_id
         ):
             return False
@@ -30,5 +31,7 @@ class TeamPermission(IsActiveMember):
         if auth_member.has_manager_permission:
             return True
 
-        auth_member_team = auth_member.teams.filter(team_id=obj.id, is_active=True).get_or_none()
+        auth_member_team = auth_member.teams.filter(
+            team_id=obj.id, is_active=True
+        ).get_or_none()
         return bool(auth_member_team) and auth_member_team.has_admin_permission

@@ -1,5 +1,4 @@
 from django.db import transaction
-
 from rest_framework import serializers
 
 from apps.accounts.choices import MemberRoleChoices
@@ -13,8 +12,8 @@ class OrganizationSerializer(ModelSerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Organization
-        fields = "__all__"
-        read_only_fields = ModelSerializerMixin._default_read_only_fields + ["owner"]
+        fields = '__all__'
+        read_only_fields = ModelSerializerMixin._default_read_only_fields + ['owner']
 
     def create(self, validated_data):
         """
@@ -30,5 +29,5 @@ class OrganizationSerializer(ModelSerializerMixin, serializers.ModelSerializer):
                 updated_by=self.auth_user,
             )
             instance.owner = member
-            instance.save(update_fields=["owner"])
+            instance.save(update_fields=['owner'])
         return instance

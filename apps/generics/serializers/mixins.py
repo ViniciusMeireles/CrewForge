@@ -8,7 +8,14 @@ class ModelSerializerMixin(FieldMixin):
     """
 
     serializer_related_field = PrimaryKeyRelatedField
-    _default_read_only_fields = ["id", "is_active", "created_at", "updated_at", "created_by", "updated_by"]
+    _default_read_only_fields = [
+        'id',
+        'is_active',
+        'created_at',
+        'updated_at',
+        'created_by',
+        'updated_by',
+    ]
 
     @property
     def validated_data(self):

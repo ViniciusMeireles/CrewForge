@@ -13,7 +13,7 @@ class MemberFactory(ModelFactoryMixin, DjangoModelFactory):
     nickname = factory.Faker('user_name')
     user = factory.SubFactory(UserFactory)
     organization = factory.SubFactory(
-        factory="apps.accounts.factories.organizations.OrganizationFactory",
+        factory='apps.accounts.factories.organizations.OrganizationFactory',
     )
     role = MemberRoleChoices.MEMBER
 

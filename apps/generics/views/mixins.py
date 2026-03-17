@@ -1,5 +1,4 @@
 from django.db.models.expressions import Combinable, F
-
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -11,26 +10,30 @@ class ModelViewSetMixin(RequestUserMixin):
     """Mixin for views to add user, member, and organization properties."""
 
     def perform_destroy(self, instance):
-        if hasattr(instance, "is_active"):
+        if hasattr(instance, 'is_active'):
             instance.inactivate()
         else:
             super().perform_destroy(instance)
 
     def get_label_expression(self) -> str | Combinable:
-        """Returns the label expression for the queryset. This is used for choices options."""
-        if label_expression := getattr(self, "label_expression", None):
+        """
+        Returns the label expression for the queryset. This is used for choices options.
+        """
+        if label_expression := getattr(self, 'label_expression', None):
             return label_expression
-        raise NotImplementedError("Subclasses must implement this method.")
+        raise NotImplementedError('Subclasses must implement this method.')
 
     def get_value_expression(self) -> str | Combinable:
-        """Returns the value expression for the queryset. This is used for choices options."""
-        if value_expression := getattr(self, "value_expression", None):
+        """
+        Returns the value expression for the queryset. This is used for choices options.
+        """
+        if value_expression := getattr(self, 'value_expression', None):
             return value_expression
         elif self.lookup_field:
             return self.lookup_field
-        return "pk"
+        return 'pk'
 
-    @action(detail=False, methods=["get"], url_path="choices")
+    @action(detail=False, methods=['get'], url_path='choices')
     def choices(self, request, *args, **kwargs):
         """List teams for choices (value/label format)."""
         queryset = self.filter_queryset(self.get_queryset())
@@ -40,7 +43,7 @@ class ModelViewSetMixin(RequestUserMixin):
         choices_queryset = queryset.annotate(
             _choice_label=F(label) if isinstance(label, str) else label,
             _choice_value=F(value) if isinstance(value, str) else value,
-        ).values("_choice_value", "_choice_label")
+        ).values('_choice_value', '_choice_label')
 
         choices_page = self.paginate_queryset(choices_queryset)
         if choices_page is not None:

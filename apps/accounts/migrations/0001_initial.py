@@ -445,7 +445,7 @@ class Migration(migrations.Migration):
                 help_text='Organizations to which the user belongs',
                 related_name='users',
                 through='accounts.Member',
-                through_fields=['user', 'organization'],
+                through_fields=('user', 'organization'),
                 to='accounts.organization',
                 verbose_name='Organizations',
             ),

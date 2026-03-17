@@ -1,10 +1,16 @@
-from .base import *
+import os
 
-DEBUG = eval(os.environ.get("DEBUG", "False"))
-ALLOWED_HOSTS = ["*"]
+from .base import *  # noqa
+from .base import (
+    BASE_DIR,
+    INSTALLED_APPS,
+)
+
+DEBUG = eval(os.environ.get('DEBUG', 'False'))
+ALLOWED_HOSTS = ['*']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = os.environ.get("MEDIA_URL", "/media/")
+MEDIA_URL = os.environ.get('MEDIA_URL', '/media/')
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 SECURE_HSTS_SECONDS = 0

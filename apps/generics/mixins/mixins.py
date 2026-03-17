@@ -3,7 +3,11 @@ from django.utils.functional import cached_property
 
 from apps.accounts.models.member import Member
 from apps.accounts.models.organization import Organization
-from apps.generics.utils.requests import get_member, get_organization, get_organization_id
+from apps.generics.utils.requests import (
+    get_member,
+    get_organization,
+    get_organization_id,
+)
 
 User = get_user_model()
 

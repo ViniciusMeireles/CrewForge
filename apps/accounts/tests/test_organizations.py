@@ -1,5 +1,4 @@
 from django.urls import reverse
-
 from rest_framework import status as http_status
 from rest_framework.test import APITestCase
 
@@ -13,11 +12,11 @@ from apps.accounts.tests.mixins import APITestCaseMixin
 class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.detail_url_name = "accounts:organizations-detail"
-        cls.list_url_name = "accounts:organizations-list"
-        cls.login_url_name = "accounts:organizations-login"
+        cls.detail_url_name = 'accounts:organizations-detail'
+        cls.list_url_name = 'accounts:organizations-list'
+        cls.login_url_name = 'accounts:organizations-login'
         cls.list_url = reverse(cls.list_url_name)
-        cls.choices_url = reverse("accounts:organizations-choices")
+        cls.choices_url = reverse('accounts:organizations-choices')
 
     def test_list_and_coices_organizations(self):
         """Test the list and choices views of the organization."""
@@ -30,7 +29,7 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         for url in [self.list_url, self.choices_url]:
             response = self.client.get(url)
             self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-            self.assertEqual(response.data.get("count"), 5)
+            self.assertEqual(response.data.get('count'), 5)
 
     def test_create_organization(self):
         """Test the create view of the organization."""
@@ -39,20 +38,20 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
 
         organization_data = OrganizationFactory.build()
         payload = {
-            "name": organization_data.name,
-            "slug": organization_data.slug,
+            'name': organization_data.name,
+            'slug': organization_data.slug,
         }
 
         response = self.client.post(
             path=self.list_url,
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_201_CREATED)
-        self.assertEqual(response.data.get("name"), organization_data.name)
-        self.assertEqual(response.data.get("slug"), organization_data.slug)
+        self.assertEqual(response.data.get('name'), organization_data.name)
+        self.assertEqual(response.data.get('slug'), organization_data.slug)
 
-        owner_id = response.data.get("owner")
+        owner_id = response.data.get('owner')
         owner = MemberFactory._meta.model.objects.get(id=owner_id)
         self.assertEqual(owner.user_id, user.id)
 
@@ -65,20 +64,20 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         url = reverse(self.login_url_name, args=[member1.organization_id])
         response = self.client.post(
             path=url,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-        organization_id1 = self.client.session.get("organization_id")
+        organization_id1 = self.client.session.get('organization_id')
         self.assertEqual(organization_id1, member1.organization_id)
 
         member2 = MemberFactory.create(user=user)
         url = reverse(self.login_url_name, args=[member2.organization_id])
         response = self.client.post(
             path=url,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-        organization_id2 = self.client.session.get("organization_id")
+        organization_id2 = self.client.session.get('organization_id')
         self.assertEqual(organization_id2, member2.organization_id)
 
         self.assertNotEqual(member1.organization_id, member2.organization_id)
@@ -92,7 +91,7 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         url = reverse(self.login_url_name, args=[9999])
         response = self.client.post(
             path=url,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_404_NOT_FOUND)
 
@@ -103,12 +102,12 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
 
         response = self.client.get(
             path=url,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-        self.assertEqual(response.data.get("name"), organization.name)
-        self.assertEqual(response.data.get("slug"), organization.slug)
-        self.assertEqual(response.data.get("owner"), organization.owner_id)
+        self.assertEqual(response.data.get('name'), organization.name)
+        self.assertEqual(response.data.get('slug'), organization.slug)
+        self.assertEqual(response.data.get('owner'), organization.owner_id)
 
     def test_update_organization(self):
         """Test the update view of the organization."""
@@ -119,19 +118,19 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         organization_data = OrganizationFactory.build()
 
         payload = {
-            "name": organization_data.name,
-            "slug": organization_data.slug,
+            'name': organization_data.name,
+            'slug': organization_data.slug,
         }
 
         response = self.client.put(
             path=url,
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-        self.assertEqual(response.data.get("name"), organization_data.name)
-        self.assertEqual(response.data.get("slug"), organization_data.slug)
-        self.assertEqual(response.data.get("owner"), organization.owner_id)
+        self.assertEqual(response.data.get('name'), organization_data.name)
+        self.assertEqual(response.data.get('slug'), organization_data.slug)
+        self.assertEqual(response.data.get('owner'), organization.owner_id)
 
     def test_update_organization_not_role_permission(self):
         """Test the update view of the organization without role permission."""
@@ -144,8 +143,8 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         ]
         organization_data = OrganizationFactory.build()
         payload = {
-            "name": organization_data.name,
-            "slug": organization_data.slug,
+            'name': organization_data.name,
+            'slug': organization_data.slug,
         }
         for member in members:
             self.client.force_authenticate(member=member)
@@ -153,7 +152,7 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
             response = self.client.put(
                 path=url,
                 data=payload,
-                format="json",
+                format='json',
             )
             self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
@@ -164,7 +163,7 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         response = self.client.put(
             path=url,
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
@@ -174,7 +173,7 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         response = self.client.put(
             path=url,
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
 
@@ -186,7 +185,7 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
 
         response = self.client.delete(
             path=url,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_204_NO_CONTENT)
 
@@ -204,7 +203,7 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
             url = reverse(self.detail_url_name, args=[organization.id])
             response = self.client.delete(
                 path=url,
-                format="json",
+                format='json',
             )
             self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
@@ -214,7 +213,7 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         url = reverse(self.detail_url_name, args=[organization_2.id])
         response = self.client.delete(
             path=url,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
@@ -223,7 +222,7 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         url = reverse(self.detail_url_name, args=[organization.id])
         response = self.client.delete(
             path=url,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
 
@@ -231,13 +230,13 @@ class OrganizationAPITestCase(APITestCaseMixin, APITestCase):
         organization1 = self.new_account(login=False)
         organization_data = OrganizationFactory.build()
         payload = {
-            "name": organization_data.name,
-            "slug": organization1.slug,
+            'name': organization_data.name,
+            'slug': organization1.slug,
         }
 
         response = self.client.post(
             path=self.list_url,
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
