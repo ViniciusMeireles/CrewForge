@@ -10,7 +10,11 @@ help:  ## Display this help message
 ##@ General
 
 build:  ## Build Docker images
-	docker compose build --no-cache
+	docker compose build \
+      --build-arg USER_NAME=$(shell whoami) \
+	  --build-arg USER_ID=$(shell id -u) \
+	  --build-arg GROUP_ID=$(shell id -g) \
+	  --no-cache
 
 up:  ## Start containers in background mode
 	docker compose up -d
