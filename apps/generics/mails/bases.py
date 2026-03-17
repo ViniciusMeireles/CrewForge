@@ -24,13 +24,15 @@ class EmailView(TemplateView):
         if email_class:
             self.email_class = email_class
         if not self.email_class:
-            raise ValueError("email_class must be provided")
+            raise ValueError('email_class must be provided')
         self.email = None
         super().__init__(**kwargs)
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        self.email = self.email_class(is_preview=True, **self.email_class.get_preview_kwargs(view=self))
+        self.email = self.email_class(
+            is_preview=True, **self.email_class.get_preview_kwargs(view=self)
+        )
 
     def get_template_names(self):
         if self.template_name:
@@ -102,7 +104,8 @@ class EmailBase:
     def __init__(self, is_preview: bool = False, **kwargs):
         """
         Initializes the EmailBase instance with recipient list and optional attributes.
-        :param is_preview: Indicates if the email is being rendered for preview purposes.
+        :param is_preview: Indicates if the email is being rendered for preview
+                           purposes.
         :param kwargs: Additional attributes to override default values.
         """
         self._is_preview = is_preview
@@ -120,7 +123,7 @@ class EmailBase:
     def get_subject(self) -> str:
         if not self.subject:
             if self.is_preview:
-                logging.warning("Subject is not defined in preview mode")
+                logging.warning('Subject is not defined in preview mode')
             else:
                 raise ValueError('Subject is not defined')
         return self.subject
@@ -128,7 +131,7 @@ class EmailBase:
     def get_recipient_list(self) -> list[str]:
         if not self.recipient_list:
             if self.is_preview:
-                logging.warning("Recipient list is empty in preview mode")
+                logging.warning('Recipient list is empty in preview mode')
             else:
                 raise ValueError('Recipient list is empty')
         return self.recipient_list
@@ -168,7 +171,7 @@ class EmailBase:
 
     def get_file_name(self) -> str | None:
         if not self.file_name and self.get_file_path():
-            file_name = self.file_path.split("/")[-1] if self.file_path else None
+            file_name = self.file_path.split('/')[-1] if self.file_path else None
             return file_name
         return self.file_name
 
@@ -221,11 +224,11 @@ class EmailBase:
             from_email=self.get_from_email(),
             to=self.get_recipient_list(),
         )
-        msg.attach_alternative(html_content, "text/html")
+        msg.attach_alternative(html_content, 'text/html')
         if self.file_path:
-            with default_storage.open(self.file_path, "rb") as file:
+            with default_storage.open(self.file_path, 'rb') as file:
                 msg.attach(
-                    filename=self.file_name or self.file_path.split("/")[-1],
+                    filename=self.file_name or self.file_path.split('/')[-1],
                     content=file.read(),
                     mimetype=self.file_mimetype,
                 )
@@ -238,7 +241,10 @@ class EmailBase:
 
     @classmethod
     def get_preview_kwargs(cls, view: EmailView | None = None) -> dict:
-        """Returns the keyword arguments to instantiate the email class for preview purposes."""
+        """
+        Returns the keyword arguments to instantiate the email class for preview
+        purposes.
+        """
         return view.kwargs if view else {}
 
     @classmethod

@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -24,15 +23,15 @@ class UserSerializer(ModelSerializerMixin, serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password']
         read_only_fields = ['id']
         extra_kwargs = {
-            'password': {'write_only': True, "required": False},
+            'password': {'write_only': True, 'required': False},
         }
 
     def validate_password(self, value):
         """Validate that the password is not empty."""
         if not value and self.instance:
-            raise serializers.ValidationError(_("Password cannot be empty."))
+            raise serializers.ValidationError(_('Password cannot be empty.'))
         elif value and self.instance and self.instance != self.auth_user:
-            raise serializers.ValidationError(_("Not allowed to change the password."))
+            raise serializers.ValidationError(_('Not allowed to change the password.'))
         return value
 
     @staticmethod
@@ -41,12 +40,14 @@ class UserSerializer(ModelSerializerMixin, serializers.ModelSerializer):
         user_model = get_user_model()
         username_field = user_model.USERNAME_FIELD
         return _(
-            "User with this %(username)s already exists."
+            'User with this %(username)s already exists.'
             % {'username': get_verbose_name_field(user_model, username_field)}
         )
 
     def is_valid(self, *, raise_exception=False):
-        """Override the is_valid method to skip validation if the user already exists."""
+        """
+        Override the is_valid method to skip validation if the user already exists.
+        """
         super().is_valid(raise_exception=False)
         errors = {}
 
@@ -55,7 +56,11 @@ class UserSerializer(ModelSerializerMixin, serializers.ModelSerializer):
         username_value = self.validated_data.get(username_field)
         if (
             username_value
-            and (instance := get_object_or_none(user_model, **{username_field: username_value}))
+            and (
+                instance := get_object_or_none(
+                    user_model, **{username_field: username_value}
+                )
+            )
             and not (self.auth_user and self.auth_user == instance)
         ):
             errors.update({username_field: self._user_already_message()})
@@ -93,14 +98,20 @@ class UserGetOrCreateSerializer(UserSerializer):
     """Serializer for getting or creating a user."""
 
     def is_valid(self, *, raise_exception=False):
-        """Override the is_valid method to skip validation if the user already exists."""
+        """
+        Override the is_valid method to skip validation if the user already exists.
+        """
         super().is_valid(raise_exception=False)
         errors = {}
 
         user_model = get_user_model()
         username_field = user_model.USERNAME_FIELD
         username_value = self.validated_data.get(username_field)
-        if username_value and (instance := get_object_or_none(user_model, **{username_field: username_value})):
+        if username_value and (
+            instance := get_object_or_none(
+                user_model, **{username_field: username_value}
+            )
+        ):
             if self.auth_user:
                 self.instance = instance
                 return True

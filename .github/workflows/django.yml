@@ -39,11 +39,11 @@ jobs:
     - name: Install the project
       run: uv sync --locked --all-extras --dev
 
-    - name: Run black
-      run: uv run black --check --verbose .
+    - name: Run ruff format
+      run: uv run ruff format --check .
 
-    - name: Run isort
-      run: uv run isort --check-only --diff .
+    - name: Run ruff check
+      run: uv run ruff check .
 
     - name: Collect static files
       env:

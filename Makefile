@@ -55,9 +55,9 @@ shell_plus:  ## Open Django shell with all models imported
 spectacular:  ## Generate OpenAPI schema for the Django project
 	docker compose exec django_api uv run python manage.py spectacular --color --file schema.yml
 
-format_code:  ## Format code with black
-	docker compose exec django_api uv run black .
-	docker compose exec django_api uv run isort .
+format_code:  ## Format code with ruff
+	docker compose exec django_api uv run ruff check . --fix
+	docker compose exec django_api uv run ruff format .
 
 test:  ## Run tests for the Django project
 	docker compose exec django_api uv run pytest

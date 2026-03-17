@@ -15,34 +15,34 @@ def _get_user_full_name_expression() -> models.Expression:
     This is used to generate the full name of the user based on
     the first name, last name, and username.
     """
-    first_name = "first_name"
-    last_name = "last_name"
-    username = "username"
+    first_name = 'first_name'
+    last_name = 'last_name'
+    username = 'username'
     return Case(
         When(
             condition=models.Q(
-                ~models.Q(**{first_name: ""}),
-                ~models.Q(**{last_name: ""}),
-                **{f"{first_name}__isnull": False},
-                **{f"{last_name}__isnull": False},
+                ~models.Q(**{first_name: ''}),
+                ~models.Q(**{last_name: ''}),
+                **{f'{first_name}__isnull': False},
+                **{f'{last_name}__isnull': False},
             ),
             then=Concat(
                 first_name,
-                Value(" "),
+                Value(' '),
                 last_name,
             ),
         ),
         When(
             condition=models.Q(
-                ~models.Q(**{last_name: ""}),
-                **{f"{last_name}__isnull": False},
+                ~models.Q(**{last_name: ''}),
+                **{f'{last_name}__isnull': False},
             ),
             then=last_name,
         ),
         When(
             condition=models.Q(
-                ~models.Q(**{first_name: ""}),
-                **{f"{first_name}__isnull": False},
+                ~models.Q(**{first_name: ''}),
+                **{f'{first_name}__isnull': False},
             ),
             then=first_name,
         ),
@@ -53,12 +53,12 @@ def _get_user_full_name_expression() -> models.Expression:
 
 class User(AbstractUser, BaseModel):
     organizations = models.ManyToManyField(
-        to="accounts.Organization",
+        to='accounts.Organization',
         related_name='users',
         verbose_name=_('Organizations'),
         help_text=_('Organizations to which the user belongs'),
         through='accounts.Member',
-        through_fields=['user', 'organization'],
+        through_fields=('user', 'organization'),
     )
     full_name = GeneratedField(
         expression=_get_user_full_name_expression(),

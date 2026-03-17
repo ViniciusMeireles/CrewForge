@@ -1,15 +1,19 @@
 from django.conf import settings
 from django.utils.translation import gettext as _
-
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status as http_status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView as TokenObtainPairViewBase
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView as TokenObtainPairViewBase,
+)
 
 from apps.accounts.emails import PasswordResetRequestEmail
-from apps.accounts.serializers.auth import PasswordResetConfirmSerializer, PasswordResetRequestSerializer
+from apps.accounts.serializers.auth import (
+    PasswordResetConfirmSerializer,
+    PasswordResetRequestSerializer,
+)
 from apps.accounts.settings import api_settings
 
 
@@ -21,10 +25,14 @@ class TokenObtainPairView(TokenObtainPairViewBase):
     request=PasswordResetRequestSerializer,
     responses={
         200: OpenApiResponse(
-            response=None, description=_('Password reset link has been sent to your email. Please check your inbox.')
+            response=None,
+            description=_(
+                'Password reset link has been sent to your email. Please check '
+                'your inbox.'
+            ),
         ),
     },
-    description=_('Request a password reset link to be sent to the user\'s email.'),
+    description=_("Request a password reset link to be sent to the user's email."),
 )
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
@@ -43,7 +51,10 @@ class PasswordResetRequestView(APIView):
 
         return Response(
             data={
-                'detail': _('Password reset link has been sent to your email. Please check your inbox.'),
+                'detail': _(
+                    'Password reset link has been sent to your email. Please check '
+                    'your inbox.'
+                ),
             },
             status=http_status.HTTP_200_OK,
         )
@@ -54,10 +65,15 @@ class PasswordResetRequestView(APIView):
     responses={
         200: OpenApiResponse(
             response=None,
-            description=_('Your password has been successfully reset. You can now log in with your new password.'),
+            description=_(
+                'Your password has been successfully reset. You can now log in with '
+                'your new password.'
+            ),
         ),
     },
-    description=_('Confirm the password reset using the provided token and new password.'),
+    description=_(
+        'Confirm the password reset using the provided token and new password.'
+    ),
 )
 class PasswordResetConfirmView(APIView):
     permission_classes = [AllowAny]
@@ -74,7 +90,10 @@ class PasswordResetConfirmView(APIView):
 
         return Response(
             data={
-                'detail': _('Your password has been successfully reset. You can now log in with your new password.'),
+                'detail': _(
+                    'Your password has been successfully reset. You can now log in '
+                    'with your new password.'
+                ),
             },
             status=http_status.HTTP_200_OK,
         )

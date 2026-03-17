@@ -1,5 +1,4 @@
 from django.urls import reverse
-
 from rest_framework import status as http_status
 from rest_framework.test import APITestCase
 
@@ -15,19 +14,19 @@ from apps.teams.factories.teams import TeamFactory
 class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.detail_url_name = "teams:team_members-detail"
-        cls.list_url_name = "teams:team_members-list"
+        cls.detail_url_name = 'teams:team_members-detail'
+        cls.list_url_name = 'teams:team_members-list'
         cls.list_url = reverse(cls.list_url_name)
-        cls.choices_url = reverse("teams:team_members-choices")
+        cls.choices_url = reverse('teams:team_members-choices')
 
     def setUp(self):
         self.organization = self.new_account()
 
     def _assert_data(self, response, team_member_data):
         """Helper method to assert the response data."""
-        self.assertEqual(response.data.get("team"), team_member_data.team.id)
-        self.assertEqual(response.data.get("member"), team_member_data.member.id)
-        self.assertEqual(response.data.get("role"), team_member_data.role)
+        self.assertEqual(response.data.get('team'), team_member_data.team.id)
+        self.assertEqual(response.data.get('member'), team_member_data.member.id)
+        self.assertEqual(response.data.get('role'), team_member_data.role)
 
     def test_list_and_choices_team_members(self):
         """Test listing team members."""
@@ -36,17 +35,19 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
         for url in [self.list_url, self.choices_url]:
             response = self.client.get(url)
             self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-            self.assertEqual(response.data.get("count"), 7)
+            self.assertEqual(response.data.get('count'), 7)
 
     def test_create_team_member(self):
         """Test creating a team member."""
         team = TeamFactory.create(organization=self.organization)
         member = MemberFactory.create(organization=self.organization)
-        team_member_data = TeamMemberFactory.build(team=team, member=member, organization=self.organization)
+        team_member_data = TeamMemberFactory.build(
+            team=team, member=member, organization=self.organization
+        )
         payload = {
-            "team": team_member_data.team.id,
-            "member": team_member_data.member.id,
-            "role": team_member_data.role,
+            'team': team_member_data.team.id,
+            'member': team_member_data.member.id,
+            'role': team_member_data.role,
         }
 
         response = self.client.post(self.list_url, data=payload)
@@ -66,18 +67,22 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
         team_member = TeamMemberFactory.create(organization=self.organization)
         new_role = TeamMemberRoleChoices.ADMIN
         payload = {
-            "role": new_role,
+            'role': new_role,
         }
 
-        response = self.client.put(reverse(self.detail_url_name, args=[team_member.id]), data=payload)
+        response = self.client.put(
+            reverse(self.detail_url_name, args=[team_member.id]), data=payload
+        )
         self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-        self.assertEqual(response.data.get("role"), new_role)
+        self.assertEqual(response.data.get('role'), new_role)
 
     def test_delete_team_member(self):
         """Test deleting a team member."""
         team_member = TeamMemberFactory.create(organization=self.organization)
 
-        response = self.client.delete(reverse(self.detail_url_name, args=[team_member.id]))
+        response = self.client.delete(
+            reverse(self.detail_url_name, args=[team_member.id])
+        )
         self.assertEqual(response.status_code, http_status.HTTP_204_NO_CONTENT)
 
         # Verify that the team member no longer exists
@@ -89,14 +94,16 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
         team_member = TeamMemberFactory.create(organization=self.organization)
 
         # Delete the team member
-        response = self.client.delete(reverse(self.detail_url_name, args=[team_member.id]))
+        response = self.client.delete(
+            reverse(self.detail_url_name, args=[team_member.id])
+        )
         self.assertEqual(response.status_code, http_status.HTTP_204_NO_CONTENT)
 
         # Recreate the team member
         payload = {
-            "team": team_member.team.id,
-            "member": team_member.member.id,
-            "role": team_member.role,
+            'team': team_member.team.id,
+            'member': team_member.member.id,
+            'role': team_member.role,
         }
         response = self.client.post(self.list_url, data=payload)
         self.assertEqual(response.status_code, http_status.HTTP_201_CREATED)
@@ -104,7 +111,9 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
 
     def test_not_permission_team_member(self):
         """Test that a user without permission cannot create a team member."""
-        team_member = TeamMemberFactory.create(organization=OrganizationFactory.create())
+        team_member = TeamMemberFactory.create(
+            organization=OrganizationFactory.create()
+        )
 
         response = self.client.get(reverse(self.detail_url_name, args=[team_member.id]))
         self.assertEqual(response.status_code, http_status.HTTP_404_NOT_FOUND)
@@ -118,7 +127,7 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
         self.client.force_authenticate(member=simple_member)
         response = self.client.put(
             reverse(self.detail_url_name, args=[team_member.id]),
-            data={"role": TeamMemberRoleChoices.ADMIN},
+            data={'role': TeamMemberRoleChoices.ADMIN},
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
@@ -139,11 +148,13 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
         """Test creating a team member without authentication."""
         team = TeamFactory.create(organization=self.organization)
         member = MemberFactory.create(organization=self.organization)
-        team_member_data = TeamMemberFactory.build(team=team, member=member, organization=self.organization)
+        team_member_data = TeamMemberFactory.build(
+            team=team, member=member, organization=self.organization
+        )
         payload = {
-            "team": team_member_data.team.id,
-            "member": team_member_data.member.id,
-            "role": team_member_data.role,
+            'team': team_member_data.team.id,
+            'member': team_member_data.member.id,
+            'role': team_member_data.role,
         }
         self.client.force_authenticate(member=None)
         response = self.client.post(self.list_url, data=payload)
@@ -154,17 +165,21 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
         team_member = TeamMemberFactory.create(organization=self.organization)
         new_role = TeamMemberRoleChoices.ADMIN
         payload = {
-            "role": new_role,
+            'role': new_role,
         }
         self.client.force_authenticate(member=None)
-        response = self.client.put(reverse(self.detail_url_name, args=[team_member.id]), data=payload)
+        response = self.client.put(
+            reverse(self.detail_url_name, args=[team_member.id]), data=payload
+        )
         self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
 
     def test_not_authenticated_delete_team_member(self):
         """Test deleting a team member without authentication."""
         team_member = TeamMemberFactory.create(organization=self.organization)
         self.client.force_authenticate(member=None)
-        response = self.client.delete(reverse(self.detail_url_name, args=[team_member.id]))
+        response = self.client.delete(
+            reverse(self.detail_url_name, args=[team_member.id])
+        )
         self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
 
     def test_not_active_member_list_team_members(self):
@@ -192,11 +207,13 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
         """Test creating a team member with an inactive member."""
         team = TeamFactory.create(organization=self.organization)
         member = MemberFactory.create(organization=self.organization)
-        team_member_data = TeamMemberFactory.build(team=team, member=member, organization=self.organization)
+        team_member_data = TeamMemberFactory.build(
+            team=team, member=member, organization=self.organization
+        )
         payload = {
-            "team": team_member_data.team.id,
-            "member": team_member_data.member.id,
-            "role": team_member_data.role,
+            'team': team_member_data.team.id,
+            'member': team_member_data.member.id,
+            'role': team_member_data.role,
         }
         inactive_member = MemberFactory.create(
             organization=self.organization,
@@ -211,14 +228,16 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
         team_member = TeamMemberFactory.create(organization=self.organization)
         new_role = TeamMemberRoleChoices.ADMIN
         payload = {
-            "role": new_role,
+            'role': new_role,
         }
         inactive_member = MemberFactory.create(
             organization=self.organization,
             is_active=False,
         )
         self.client.force_authenticate(member=inactive_member)
-        response = self.client.put(reverse(self.detail_url_name, args=[team_member.id]), data=payload)
+        response = self.client.put(
+            reverse(self.detail_url_name, args=[team_member.id]), data=payload
+        )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
     def test_not_active_member_delete_team_member(self):
@@ -229,5 +248,7 @@ class TeamMemberAPITestCase(APITestCaseMixin, APITestCase):
             is_active=False,
         )
         self.client.force_authenticate(member=inactive_member)
-        response = self.client.delete(reverse(self.detail_url_name, args=[team_member.id]))
+        response = self.client.delete(
+            reverse(self.detail_url_name, args=[team_member.id])
+        )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)

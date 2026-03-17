@@ -1,5 +1,4 @@
 from django.db import transaction
-
 from rest_framework import serializers
 
 from apps.generics.serializers.mixins import ModelSerializerMixin
@@ -12,7 +11,9 @@ class TeamSerializer(ModelSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = '__all__'
-        read_only_fields = ModelSerializerMixin._default_read_only_fields + ['organization']
+        read_only_fields = ModelSerializerMixin._default_read_only_fields + [
+            'organization'
+        ]
 
     def create(self, validated_data):
         """Create a new team."""

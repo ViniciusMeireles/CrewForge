@@ -13,12 +13,12 @@ from apps.generics.views.mixins import ModelViewSetMixin
 class InvitationViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
     serializer_class = InvitationSerializer
     queryset = Invitation.objects.filter(is_active=True)
-    http_method_names = ["get", "post", "put", "delete", "options"]
+    http_method_names = ['get', 'post', 'put', 'delete', 'options']
     permission_classes = [InvitationPermission]
-    lookup_field = "key"
+    lookup_field = 'key'
     filterset_class = InvitationFilter
     filter_backends = [backends.DjangoFilterBackend]
-    label_expression = "email"
+    label_expression = 'email'
 
     def get_queryset(self):
         """Get the queryset for the view."""

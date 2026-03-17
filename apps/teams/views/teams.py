@@ -13,11 +13,11 @@ from apps.teams.serializers.team import TeamSerializer
 class TeamViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
-    http_method_names = ["get", "post", "put", "delete", "options"]
+    http_method_names = ['get', 'post', 'put', 'delete', 'options']
     permission_classes = [TeamPermission]
     filterset_class = TeamFilter
     filter_backends = [backends.DjangoFilterBackend]
-    label_expression = "name"
+    label_expression = 'name'
 
     def get_queryset(self):
         """Get the queryset for the view."""

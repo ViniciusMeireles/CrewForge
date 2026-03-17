@@ -5,8 +5,11 @@ from apps.accounts.tests.client import CustomAPIClient
 
 class APITestCaseMixin:
     client_class = CustomAPIClient
+    client: CustomAPIClient = None
 
-    def new_account(self, login: bool = True, organization_login: bool = True) -> Organization:
+    def new_account(
+        self, login: bool = True, organization_login: bool = True
+    ) -> Organization:
         organization = OrganizationFactory.create()
         if login:
             if organization_login:

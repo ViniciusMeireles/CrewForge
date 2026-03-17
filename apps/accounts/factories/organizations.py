@@ -1,6 +1,5 @@
-from django.utils.text import slugify
-
 import factory
+from django.utils.text import slugify
 from factory.django import DjangoModelFactory
 
 from apps.accounts.choices import MemberRoleChoices
@@ -9,7 +8,7 @@ from apps.generics.factories.mixins import ModelFactoryMixin
 
 
 class OrganizationFactory(ModelFactoryMixin, DjangoModelFactory):
-    name = factory.Faker("company")
+    name = factory.Faker('company')
     slug = factory.LazyAttribute(lambda o: slugify(o.name))
 
     class Meta:
@@ -26,5 +25,7 @@ class OrganizationFactory(ModelFactoryMixin, DjangoModelFactory):
         from apps.accounts.factories.users import UserFactory
 
         owner_user = UserFactory()
-        self.owner = MemberFactory(user=owner_user, organization=self, role=MemberRoleChoices.OWNER.value)
+        self.owner = MemberFactory(
+            user=owner_user, organization=self, role=MemberRoleChoices.OWNER.value
+        )
         self.save()

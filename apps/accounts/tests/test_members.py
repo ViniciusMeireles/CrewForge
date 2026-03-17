@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import timezone
-
 from rest_framework import status as http_status
 from rest_framework.test import APITestCase
 
@@ -17,12 +16,12 @@ User = get_user_model()
 class MemberAPITestCase(APITestCaseMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.detail_url_name = "accounts:members-detail"
-        cls.list_url_name = "accounts:members-list"
+        cls.detail_url_name = 'accounts:members-detail'
+        cls.list_url_name = 'accounts:members-list'
         cls.list_url = reverse(cls.list_url_name)
-        cls.choices_url = reverse("accounts:members-choices")
-        cls.create_with_invite_url_name = "accounts:members-create-with-invite"
-        cls.update_role_url_name = "accounts:members-update-role"
+        cls.choices_url = reverse('accounts:members-choices')
+        cls.create_with_invite_url_name = 'accounts:members-create-with-invite'
+        cls.update_role_url_name = 'accounts:members-update-role'
 
     def setUp(self):
         self.organization = self.new_account()
@@ -30,27 +29,33 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
     def _assert_data(self, response, user_data, member_data):
         """Helper method to assert the response data."""
         if user_data:
-            self.assertEqual(response.data.get("user").get("username"), user_data.username)
-            self.assertEqual(response.data.get("user").get("email"), user_data.email)
-            self.assertEqual(response.data.get("user").get("first_name"), user_data.first_name)
-            self.assertEqual(response.data.get("user").get("last_name"), user_data.last_name)
+            self.assertEqual(
+                response.data.get('user').get('username'), user_data.username
+            )
+            self.assertEqual(response.data.get('user').get('email'), user_data.email)
+            self.assertEqual(
+                response.data.get('user').get('first_name'), user_data.first_name
+            )
+            self.assertEqual(
+                response.data.get('user').get('last_name'), user_data.last_name
+            )
         if member_data:
-            self.assertEqual(response.data.get("nickname"), member_data.nickname)
-            self.assertEqual(response.data.get("role"), member_data.role)
-            self.assertEqual(response.data.get("organization"), self.organization.id)
+            self.assertEqual(response.data.get('nickname'), member_data.nickname)
+            self.assertEqual(response.data.get('role'), member_data.role)
+            self.assertEqual(response.data.get('organization'), self.organization.id)
 
     @staticmethod
     def _payload_for_member(user_data, member_data):
         return {
-            "user": {
-                "username": user_data.username,
-                "email": user_data.email,
-                "first_name": user_data.first_name,
-                "last_name": user_data.last_name,
-                "password": "passWord*123",
+            'user': {
+                'username': user_data.username,
+                'email': user_data.email,
+                'first_name': user_data.first_name,
+                'last_name': user_data.last_name,
+                'password': 'passWord*123',
             },
-            "nickname": member_data.nickname,
-            "role": member_data.role,
+            'nickname': member_data.nickname,
+            'role': member_data.role,
         }
 
     def _create_member_with_invite(self, user_data, member_data):
@@ -64,7 +69,7 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         return self.client.post(
             path=reverse(self.create_with_invite_url_name, args=[invite.key]),
             data=payload,
-            format="json",
+            format='json',
         )
 
     def test_list_and_choices_members(self):
@@ -74,7 +79,7 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         for url in [self.list_url, self.choices_url]:
             response = self.client.get(url)
             self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-            self.assertEqual(response.data.get("count"), 6)
+            self.assertEqual(response.data.get('count'), 6)
 
     def test_create_member_with_invite(self):
         """Test the create view of the members."""
@@ -84,9 +89,11 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         response = self._create_member_with_invite(user_data, member_data)
         self.assertEqual(response.status_code, http_status.HTTP_201_CREATED)
         self._assert_data(response, user_data, member_data)
-        self.assertIsNotNone(response.data.get("access"))
-        self.assertIsNotNone(response.data.get("refresh"))
-        user = User.objects.get_or_none(**{User.USERNAME_FIELD: getattr(user_data, User.USERNAME_FIELD)})
+        self.assertIsNotNone(response.data.get('access'))
+        self.assertIsNotNone(response.data.get('refresh'))
+        user = User.objects.get_or_none(
+            **{User.USERNAME_FIELD: getattr(user_data, User.USERNAME_FIELD)}
+        )
         self.assertIsNotNone(user)
         self.assertIsNotNone(user.password)
 
@@ -109,12 +116,12 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         user_data = UserFactory.build()
         member_data = MemberFactory.build(role=member.role)
         payload = self._payload_for_member(user_data=user_data, member_data=member_data)
-        payload.pop("role")
+        payload.pop('role')
 
         response = self.client.put(
             path=reverse(self.detail_url_name, args=[member.id]),
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_200_OK)
         self._assert_data(response, user_data, member_data)
@@ -127,16 +134,16 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
             role=MemberRoleChoices.MEMBER,
         )
         payload = {
-            "role": MemberRoleChoices.MANAGER,
+            'role': MemberRoleChoices.MANAGER,
         }
 
         response = self.client.patch(
             path=reverse(self.update_role_url_name, args=[member_to_update.id]),
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-        self.assertEqual(response.data.get("role"), MemberRoleChoices.MANAGER)
+        self.assertEqual(response.data.get('role'), MemberRoleChoices.MANAGER)
 
     def test_delete_member(self):
         """Test the delete view of the members."""
@@ -160,7 +167,7 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         response = self.client.post(
             path=self.list_url,
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -181,7 +188,7 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         response = self.client.put(
             path=reverse(self.detail_url_name, args=[member.id]),
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
@@ -246,7 +253,7 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         response = self.client.post(
             path=reverse(self.create_with_invite_url_name, args=[invite.key]),
             data=self._payload_for_member(user_data, member_data),
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_404_NOT_FOUND)
 
@@ -267,7 +274,7 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         response = self.client.post(
             path=reverse(self.create_with_invite_url_name, args=[invite.key]),
             data=self._payload_for_member(user_data, member_data),
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_404_NOT_FOUND)
 
@@ -293,11 +300,11 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         user_data = UserFactory.build()
         member_data = MemberFactory.build(role=member.role)
         payload = self._payload_for_member(user_data=user_data, member_data=member_data)
-        payload.pop("role")
+        payload.pop('role')
         response = self.client.put(
             path=reverse(self.detail_url_name, args=[member.id]),
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
 
@@ -318,12 +325,12 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         )
         self.client.logout()
         payload = {
-            "role": MemberRoleChoices.MANAGER,
+            'role': MemberRoleChoices.MANAGER,
         }
         response = self.client.patch(
             path=reverse(self.update_role_url_name, args=[member_to_update.id]),
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
 
@@ -350,11 +357,11 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         user_data = UserFactory.build()
         member_data = MemberFactory.build(role=member.role)
         payload = self._payload_for_member(user_data=user_data, member_data=member_data)
-        payload.pop("role")
+        payload.pop('role')
         response = self.client.put(
             path=reverse(self.detail_url_name, args=[member.id]),
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
@@ -376,11 +383,11 @@ class MemberAPITestCase(APITestCaseMixin, APITestCase):
         )
         self.client.force_authenticate(member=member)
         payload = {
-            "role": MemberRoleChoices.MANAGER,
+            'role': MemberRoleChoices.MANAGER,
         }
         response = self.client.patch(
             path=reverse(self.update_role_url_name, args=[member_to_update.id]),
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)

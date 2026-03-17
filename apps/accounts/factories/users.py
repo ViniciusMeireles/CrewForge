@@ -1,6 +1,5 @@
-from django.contrib.auth import get_user_model
-
 import factory
+from django.contrib.auth import get_user_model
 from factory.django import DjangoModelFactory
 
 User = get_user_model()
@@ -10,8 +9,8 @@ DEFAULT_PASSWORD = 'passWord*123'
 class UserFactory(DjangoModelFactory):
     username = factory.Faker('user_name')
     email = factory.Sequence(lambda n: f'unit_test_user{n}@horologe.com')
-    first_name = factory.Faker("first_name")
-    last_name = factory.Faker("last_name")
+    first_name = factory.Faker('first_name')
+    last_name = factory.Faker('last_name')
     is_active = True
 
     class Meta:

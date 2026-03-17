@@ -1,5 +1,4 @@
 from django.utils.translation import gettext_lazy as _
-
 from rest_framework import serializers
 from rest_framework.fields import empty
 
@@ -19,23 +18,27 @@ class TeamMemberSerializer(ModelSerializerMixin, serializers.ModelSerializer):
         """Validate that the team is not already associated with the member."""
         if value:
             if self.instance and value != self.instance.team:
-                raise serializers.ValidationError(_("Not allowed to change the team."))
+                raise serializers.ValidationError(_('Not allowed to change the team.'))
             if (
                 self.auth_member
                 and not value.is_team_member(self.auth_member)
                 and not self.auth_member.has_manager_permission
             ):
-                raise serializers.ValidationError(_("You are not allowed to add a member to this team."))
+                raise serializers.ValidationError(
+                    _('You are not allowed to add a member to this team.')
+                )
         return value
 
     def validate_member(self, value):
         """Validate that the member is not already associated with the team."""
         if value and self.instance and value != self.instance.member:
-            raise serializers.ValidationError(_("Not allowed to change the member."))
+            raise serializers.ValidationError(_('Not allowed to change the member.'))
         return value
 
     def run_validation(self, initial_data=empty):
-        """Run validation on the serializer data and "recreate" the instance if needed."""
+        """
+        Run validation on the serializer data and "recreate" the instance if needed.
+        """
         team_member = None
         if initial_data and isinstance(initial_data, dict) and not self.instance:
             team_member = TeamMember.objects.filter(
@@ -46,7 +49,7 @@ class TeamMemberSerializer(ModelSerializerMixin, serializers.ModelSerializer):
             self.instance = team_member
         data = super().run_validation(initial_data)
         if team_member:
-            data.update({"is_active": True})
+            data.update({'is_active': True})
         return data
 
     def validate(self, attrs):
@@ -56,7 +59,9 @@ class TeamMemberSerializer(ModelSerializerMixin, serializers.ModelSerializer):
             member=attrs.get('member'),
         ).first()
         if team_member and (self.instance is None or team_member != self.instance):
-            raise serializers.ValidationError(_("This member is already part of the team."))
+            raise serializers.ValidationError(
+                _('This member is already part of the team.')
+            )
         return attrs
 
 
@@ -64,5 +69,8 @@ class TeamMemberUpdateSerializer(TeamMemberSerializer):
     """Serializer for updating a TeamMember."""
 
     class Meta(TeamMemberSerializer.Meta):
-        read_only_fields = TeamMemberSerializer.Meta.read_only_fields + ['team', 'member']
+        read_only_fields = TeamMemberSerializer.Meta.read_only_fields + [
+            'team',
+            'member',
+        ]
         fields = TeamMemberSerializer.Meta.fields

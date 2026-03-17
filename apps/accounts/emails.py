@@ -11,8 +11,8 @@ class PasswordResetRequestEmail(EmailBase):
     preheader = _('Use the link below to reset your password.')
     title = _('Password Reset Request')
     content = _(
-        'We received a request to reset your password. Click the button below to set a new password. '
-        'If you did not request this, please ignore this email.'
+        'We received a request to reset your password. Click the button below to set '
+        'a new password. If you did not request this, please ignore this email.'
     )
 
     def __init__(self, *, reset_url: str, **kwargs):

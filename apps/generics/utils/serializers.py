@@ -7,7 +7,7 @@ def get_user_of_context(context: dict) -> User | None:
     """
     Get the user from the context.
     """
-    request = context.get("request")
+    request = context.get('request')
     if not request:
         return None
     elif not (user := request.user):

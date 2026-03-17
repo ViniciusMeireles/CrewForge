@@ -4,7 +4,7 @@ from apps.accounts.models.invitation import Invitation
 
 
 class Command(BaseCommand):
-    help = "Expire all pending invites that are past their expiration date."
+    help = 'Expire all pending invites that are past their expiration date.'
 
     def handle(self, *args, **options):
         from django.utils import timezone
@@ -16,4 +16,4 @@ class Command(BaseCommand):
         )
 
         count_expired = expired_invites.update(is_expired=True)
-        self.stdout.write(self.style.SUCCESS(f"Expired {count_expired} invites."))
+        self.stdout.write(self.style.SUCCESS(f'Expired {count_expired} invites.'))

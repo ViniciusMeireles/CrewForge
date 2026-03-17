@@ -4,7 +4,8 @@ from rest_framework_simplejwt.settings import IMPORT_STRINGS, USER_SETTINGS, API
 DEFAULTS = DEFAULTS_BASE
 DEFAULTS.update(
     {
-        'TOKEN_OBTAIN_SERIALIZER': 'apps.accounts.serializers.auth.TokenObtainPairSerializer',
+        'TOKEN_OBTAIN_SERIALIZER': 'apps.accounts.serializers.auth.'
+        'TokenObtainPairSerializer',
     }
 )
 

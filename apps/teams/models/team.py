@@ -6,25 +6,32 @@ from apps.teams.managers.team import TeamManager
 
 
 class Team(BaseModel):
-    name = models.CharField(max_length=100, verbose_name=_("Name"), help_text=_("Name of the team"))
-    slug = models.SlugField(unique=True, verbose_name=_("Slug"), help_text=_("Team slug"))
+    name = models.CharField(
+        max_length=100, verbose_name=_('Name'), help_text=_('Name of the team')
+    )
+    slug = models.SlugField(
+        unique=True, verbose_name=_('Slug'), help_text=_('Team slug')
+    )
     description = models.TextField(
-        null=True, blank=True, verbose_name=_("Description"), help_text=_("Description of the team")
+        null=True,
+        blank=True,
+        verbose_name=_('Description'),
+        help_text=_('Description of the team'),
     )
     organization = models.ForeignKey(
-        to="accounts.Organization",
+        to='accounts.Organization',
         on_delete=models.CASCADE,
         related_name='teams',
-        verbose_name=_("Organization"),
-        help_text=_("Organization to which the team belongs"),
+        verbose_name=_('Organization'),
+        help_text=_('Organization to which the team belongs'),
     )
 
     objects = TeamManager()
 
     class Meta:
         ordering = ['-id']
-        verbose_name = _("Team")
-        verbose_name_plural = _("Teams")
+        verbose_name = _('Team')
+        verbose_name_plural = _('Teams')
         unique_together = ['name', 'organization']
 
     def __str__(self):

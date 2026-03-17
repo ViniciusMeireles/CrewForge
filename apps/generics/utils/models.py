@@ -8,7 +8,11 @@ def get_verbose_name(model: type[models.Model]) -> str | None:
 
 def get_verbose_name_plural(model: type[models.Model]) -> str | None:
     """Get the verbose name plural of a model."""
-    return model._meta.verbose_name_plural if hasattr(model, '_meta') else get_verbose_name(model) + 's'
+    return (
+        model._meta.verbose_name_plural
+        if hasattr(model, '_meta')
+        else get_verbose_name(model) + 's'
+    )
 
 
 def get_verbose_name_field(model: type[models.Model], field_name: str) -> str:
@@ -16,6 +20,6 @@ def get_verbose_name_field(model: type[models.Model], field_name: str) -> str:
     if hasattr(model, '_meta') and hasattr(model._meta, 'get_field'):
         try:
             return model._meta.get_field(field_name).verbose_name
-        except Exception as e:
+        except Exception:
             return field_name
     return field_name

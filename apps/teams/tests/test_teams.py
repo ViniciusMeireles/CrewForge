@@ -1,5 +1,4 @@
 from django.urls import reverse
-
 from rest_framework import status as http_status
 from rest_framework.test import APITestCase
 
@@ -12,10 +11,10 @@ from apps.teams.factories.teams import TeamFactory
 class TeamAPITestCase(APITestCaseMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.detail_url_name = "teams:teams-detail"
-        cls.list_url_name = "teams:teams-list"
+        cls.detail_url_name = 'teams:teams-detail'
+        cls.list_url_name = 'teams:teams-list'
         cls.list_url = reverse(cls.list_url_name)
-        cls.choices_url = reverse("teams:teams-choices")
+        cls.choices_url = reverse('teams:teams-choices')
 
     def setUp(self):
         self.organization = self.new_account()
@@ -27,28 +26,28 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
         for url in [self.list_url, self.choices_url]:
             response = self.client.get(url)
             self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-            self.assertEqual(response.data.get("count"), 8)
+            self.assertEqual(response.data.get('count'), 8)
 
     def test_create_team(self):
         """Test the create view of the teams."""
 
         team_data = TeamFactory.build()
         payload = {
-            "name": team_data.name,
-            "description": team_data.description,
-            "slug": team_data.slug,
+            'name': team_data.name,
+            'description': team_data.description,
+            'slug': team_data.slug,
         }
 
         response = self.client.post(
             path=self.list_url,
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_201_CREATED)
-        self.assertEqual(response.data.get("name"), team_data.name)
-        self.assertEqual(response.data.get("description"), team_data.description)
-        self.assertEqual(response.data.get("slug"), team_data.slug)
-        self.assertEqual(response.data.get("organization"), self.organization.id)
+        self.assertEqual(response.data.get('name'), team_data.name)
+        self.assertEqual(response.data.get('description'), team_data.description)
+        self.assertEqual(response.data.get('slug'), team_data.slug)
+        self.assertEqual(response.data.get('organization'), self.organization.id)
 
     def test_retrieve_team(self):
         """Test the retrieve view of the teams."""
@@ -58,10 +57,10 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
             path=reverse(self.detail_url_name, args=[team.id]),
         )
         self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-        self.assertEqual(response.data.get("name"), team.name)
-        self.assertEqual(response.data.get("description"), team.description)
-        self.assertEqual(response.data.get("slug"), team.slug)
-        self.assertEqual(response.data.get("organization"), self.organization.id)
+        self.assertEqual(response.data.get('name'), team.name)
+        self.assertEqual(response.data.get('description'), team.description)
+        self.assertEqual(response.data.get('slug'), team.slug)
+        self.assertEqual(response.data.get('organization'), self.organization.id)
 
     def test_update_team(self):
         """Test the update view of the teams."""
@@ -69,21 +68,21 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
 
         team_data = TeamFactory.build()
         payload = {
-            "name": team_data.name,
-            "description": team_data.description,
-            "slug": team_data.slug,
+            'name': team_data.name,
+            'description': team_data.description,
+            'slug': team_data.slug,
         }
 
         response = self.client.put(
             path=reverse(self.detail_url_name, args=[team.id]),
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_200_OK)
-        self.assertEqual(response.data.get("name"), payload["name"])
-        self.assertEqual(response.data.get("description"), payload["description"])
-        self.assertEqual(response.data.get("slug"), payload["slug"])
-        self.assertEqual(response.data.get("organization"), self.organization.id)
+        self.assertEqual(response.data.get('name'), payload['name'])
+        self.assertEqual(response.data.get('description'), payload['description'])
+        self.assertEqual(response.data.get('slug'), payload['slug'])
+        self.assertEqual(response.data.get('organization'), self.organization.id)
 
     def test_delete_team(self):
         """Test the delete view of the teams."""
@@ -104,16 +103,16 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
 
         team_data = TeamFactory.build()
         payload = {
-            "name": team_data.name,
-            "description": team_data.description,
-            "slug": team_data.slug,
+            'name': team_data.name,
+            'description': team_data.description,
+            'slug': team_data.slug,
         }
 
         # Test create team
         response = self.client.post(
             path=self.list_url,
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
@@ -136,15 +135,15 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
         """Test the create view of the teams without authentication."""
         team_data = TeamFactory.build()
         payload = {
-            "name": team_data.name,
-            "description": team_data.description,
-            "slug": team_data.slug,
+            'name': team_data.name,
+            'description': team_data.description,
+            'slug': team_data.slug,
         }
         self.client.logout()
         response = self.client.post(
             path=self.list_url,
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
 
@@ -154,15 +153,15 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
 
         team_data = TeamFactory.build()
         payload = {
-            "name": team_data.name,
-            "description": team_data.description,
-            "slug": team_data.slug,
+            'name': team_data.name,
+            'description': team_data.description,
+            'slug': team_data.slug,
         }
         self.client.logout()
         response = self.client.put(
             path=reverse(self.detail_url_name, args=[team.id]),
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_401_UNAUTHORIZED)
 
@@ -208,15 +207,15 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
 
         team_data = TeamFactory.build()
         payload = {
-            "name": team_data.name,
-            "description": team_data.description,
-            "slug": team_data.slug,
+            'name': team_data.name,
+            'description': team_data.description,
+            'slug': team_data.slug,
         }
 
         response = self.client.post(
             path=self.list_url,
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 
@@ -231,15 +230,15 @@ class TeamAPITestCase(APITestCaseMixin, APITestCase):
 
         team_data = TeamFactory.build()
         payload = {
-            "name": team_data.name,
-            "description": team_data.description,
-            "slug": team_data.slug,
+            'name': team_data.name,
+            'description': team_data.description,
+            'slug': team_data.slug,
         }
 
         response = self.client.put(
             path=reverse(self.detail_url_name, args=[team.id]),
             data=payload,
-            format="json",
+            format='json',
         )
         self.assertEqual(response.status_code, http_status.HTTP_403_FORBIDDEN)
 

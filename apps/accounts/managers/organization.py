@@ -13,5 +13,7 @@ class OrganizationProfileQueryset(BaseQuerySet):
     pass
 
 
-class OrganizationProfileManager(BaseManager.from_queryset(OrganizationProfileQueryset)):
+class OrganizationProfileManager(
+    BaseManager.from_queryset(OrganizationProfileQueryset)
+):
     pass
