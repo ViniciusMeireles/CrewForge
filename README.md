@@ -95,7 +95,7 @@ and secure authentication mechanisms.
 - :books: **API Documentation**: [Swagger](https://swagger.io/) ([drf-spectacular](https://drf-spectacular.readthedocs.io/), [RapiDoc](https://rapidocweb.com/))
 - :dash: **WSGI Server**: [Gunicorn](https://gunicorn.org/)
 - :test_tube: **Testing**: [pytest](https://pytest-django.readthedocs.io/), [Factory Boy](https://factoryboy.readthedocs.io/)
-- :blue_book: **Linting & Formatting**: [Black](https://black.readthedocs.io/), [isort](https://pycqa.github.io/isort/)
+- :blue_book: **Linting & Formatting**: [Ruff](https://docs.astral.sh/ruff/)
 
 
 ## Installation :inbox_tray:
