@@ -58,6 +58,7 @@ and secure authentication mechanisms.
 2. Use access token for authenticated requests (Bearer authentication).
 3. Refresh expired access tokens via `/api/auth/token/refresh/`.
 4. Reset passwords using `/api/auth/password-reset/` and `/api/auth/password-reset/confirm/`.
+5. Define session context for a specific organization using `/api/accounts/organizations/{id}/login/`.
 
 
 ### Role Hierarchy :crown:
@@ -72,6 +73,7 @@ and secure authentication mechanisms.
 - :incoming_envelope: `/api/accounts/invitations/` - Invitation management.
 - :bust_in_silhouette: `/api/accounts/members/` - Organization member management.
 - :office: `/api/accounts/organizations/` - Organization CRUD operations.
+- :closed_lock_with_key: `/api/accounts/organizations/{id}/login/` - Organization login to define session context.
 - :memo: `/api/accounts/signup/` - User registration with organization creation.
 
 #### Teams Module :jigsaw:
