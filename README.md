@@ -54,11 +54,19 @@ and secure authentication mechanisms.
 - :link: **Team Members**: Represents the association between members and teams, including their roles within the team.
 
 ### Authentication Flow :closed_lock_with_key:
+User login must be performed in **3 steps**:
+
 1. Obtain JWT tokens via `/api/auth/token/` using username/password credentials.
-2. Use access token for authenticated requests (Bearer authentication).
-3. Refresh expired access tokens via `/api/auth/token/refresh/`.
-4. Reset passwords using `/api/auth/password-reset/` and `/api/auth/password-reset/confirm/`.
-5. Define session context for a specific organization using `/api/accounts/organizations/{id}/login/`.
+2. List the organizations available to the authenticated user via `/api/accounts/organizations/`.
+3. Select which organization will be used for the active session via `/api/accounts/organizations/{id}/login/`.
+
+Important: obtaining a JWT token alone does **not** fully complete the login flow for organization-scoped operations. The user must also select the organization context in step 3.
+
+Additional authentication-related actions:
+
+4. Use the access token for authenticated requests (Bearer authentication).
+5. Refresh expired access tokens via `/api/auth/token/refresh/`.
+6. Reset passwords using `/api/auth/password/reset/` and `/api/auth/password/reset/confirm/`.
 
 
 ### Role Hierarchy :crown:
