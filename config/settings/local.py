@@ -6,7 +6,7 @@ from .base import (
     INSTALLED_APPS,
 )
 
-DEBUG = eval(os.environ.get('DEBUG', 'False'))
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 ALLOWED_HOSTS = ['*']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_ROOT = BASE_DIR / 'media'
