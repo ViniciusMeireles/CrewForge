@@ -239,10 +239,9 @@ SPECTACULAR_SETTINGS = {
     ],
 }
 
-if os.environ.get('CORS_ALLOWED_ORIGINS'):
-    CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
-else:
-    CORS_ALLOWED_ORIGINS = []
+CORS_ALLOWED_ORIGINS = []
+if cors_origins := os.environ.get('CORS_ALLOWED_ORIGINS'):
+    CORS_ALLOWED_ORIGINS = cors_origins.split(',')
 
 
 # System settings
