@@ -1,16 +1,14 @@
 from rest_framework import permissions
 
-from apps.accounts.permissions.member import IsActiveMember
+from apps.generics.permissions import OrganizationScopedPermission
 from apps.generics.utils.requests import get_member
 
 
-class TeamMemberPermission(IsActiveMember):
+class TeamMemberPermission(OrganizationScopedPermission):
+    organization_lookup = 'team.organization_id'
+
     def has_object_permission(self, request, view, obj):
-        if (
-            not super().has_object_permission(request, view, obj)
-            or not (organization_id := request.session.get('organization_id'))
-            or obj.team.organization_id != organization_id
-        ):
+        if not super().has_object_permission(request, view, obj):
             return False
 
         auth_member = get_member(request)

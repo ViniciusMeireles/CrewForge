@@ -19,7 +19,7 @@ from apps.accounts.serializers.member import (
 )
 from apps.generics.utils.models import get_verbose_name
 from apps.generics.utils.schema import extend_schema_model_view_set
-from apps.generics.views.mixins import ModelViewSetMixin
+from apps.generics.views.mixins import ModelViewSetMixin, OrganizationScopedViewSetMixin
 
 
 @extend_schema_model_view_set(
@@ -64,7 +64,9 @@ from apps.generics.views.mixins import ModelViewSetMixin
         description=_('Update a %(name)s.' % {'name': get_verbose_name(Member)}),
     ),
 )
-class MemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
+class MemberViewSet(
+    OrganizationScopedViewSetMixin, ModelViewSetMixin, viewsets.ModelViewSet
+):
     queryset = Member.objects.all()
     http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'options']
     permission_classes = [MemberPermission]
@@ -72,16 +74,7 @@ class MemberViewSet(ModelViewSetMixin, viewsets.ModelViewSet):
     filter_backends = [backends.DjangoFilterBackend]
     label_expression = Member.label_expression()
 
-    def get_queryset(self):
-        """Get the queryset for the view."""
-        return (
-            super()
-            .get_queryset()
-            .filter(
-                organization_id=self.auth_organization_id,
-                is_active=True,
-            )
-        )
+    base_filters = {'is_active': True}
 
     def get_serializer_class(self):
         """Get the serializer class for the view."""

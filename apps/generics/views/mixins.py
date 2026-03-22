@@ -52,3 +52,24 @@ class ModelViewSetMixin(RequestUserMixin):
 
         serializer = ChoiceSerializer(choices_queryset, many=True)
         return Response(serializer.data)
+
+
+class OrganizationScopedViewSetMixin(RequestUserMixin):
+    organization_filter = 'organization_id'
+    base_filters = {}
+
+    def get_base_queryset_filters(self) -> dict:
+        return dict(self.base_filters)
+
+    def get_organization_filter_kwargs(self) -> dict:
+        return {self.organization_filter: self.auth_organization_id}
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                **self.get_organization_filter_kwargs(),
+                **self.get_base_queryset_filters(),
+            )
+        )

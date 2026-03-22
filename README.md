@@ -58,6 +58,7 @@ and secure authentication mechanisms.
 2. Use access token for authenticated requests (Bearer authentication).
 3. Refresh expired access tokens via `/api/auth/token/refresh/`.
 4. Reset passwords using `/api/auth/password-reset/` and `/api/auth/password-reset/confirm/`.
+5. Define session context for a specific organization using `/api/accounts/organizations/{id}/login/`.
 
 
 ### Role Hierarchy :crown:
@@ -72,6 +73,7 @@ and secure authentication mechanisms.
 - :incoming_envelope: `/api/accounts/invitations/` - Invitation management.
 - :bust_in_silhouette: `/api/accounts/members/` - Organization member management.
 - :office: `/api/accounts/organizations/` - Organization CRUD operations.
+- :closed_lock_with_key: `/api/accounts/organizations/{id}/login/` - Organization login to define session context.
 - :memo: `/api/accounts/signup/` - User registration with organization creation.
 
 #### Teams Module :jigsaw:
@@ -95,7 +97,7 @@ and secure authentication mechanisms.
 - :books: **API Documentation**: [Swagger](https://swagger.io/) ([drf-spectacular](https://drf-spectacular.readthedocs.io/), [RapiDoc](https://rapidocweb.com/))
 - :dash: **WSGI Server**: [Gunicorn](https://gunicorn.org/)
 - :test_tube: **Testing**: [pytest](https://pytest-django.readthedocs.io/), [Factory Boy](https://factoryboy.readthedocs.io/)
-- :blue_book: **Linting & Formatting**: [Black](https://black.readthedocs.io/), [isort](https://pycqa.github.io/isort/)
+- :blue_book: **Linting & Formatting**: [Ruff](https://docs.astral.sh/ruff/)
 
 
 ## Installation :inbox_tray:

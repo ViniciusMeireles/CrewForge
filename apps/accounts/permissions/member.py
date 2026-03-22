@@ -1,31 +1,11 @@
 from rest_framework import permissions
-from rest_framework.permissions import IsAuthenticated
 
 from apps.accounts.choices import MemberRoleChoices
+from apps.generics.permissions import OrganizationScopedPermission
 from apps.generics.utils.requests import get_member
 
 
-class IsActiveMember(IsAuthenticated):
-    """Custom permission to check if the user is an active member."""
-
-    def has_permission(self, request, view):
-        """Check if the user is an active member."""
-        return (
-            super().has_permission(request, view)
-            and (member := get_member(request))
-            and member.is_active
-        )
-
-    def has_object_permission(self, request, view, obj):
-        """Check if the user has object-level permission and is an active member."""
-        return (
-            super().has_object_permission(request, view, obj)
-            and (member := get_member(request))
-            and member.is_active
-        )
-
-
-class MemberPermission(IsActiveMember):
+class MemberPermission(OrganizationScopedPermission):
     """
     Custom permission to check if the user has permission to perform actions on members.
     """
@@ -36,11 +16,7 @@ class MemberPermission(IsActiveMember):
         return super().has_permission(request, view)
 
     def has_object_permission(self, request, view, obj):
-        if (
-            not super().has_object_permission(request, view, obj)
-            or not (organization_id := request.session.get('organization_id'))
-            or obj.organization_id != organization_id
-        ):
+        if not super().has_object_permission(request, view, obj):
             return False
 
         auth_member = get_member(request)
@@ -51,7 +27,6 @@ class MemberPermission(IsActiveMember):
         ):
             return True
 
-        auth_member = get_member(request)
         if (
             auth_member != obj
             and not auth_member.has_admin_permission

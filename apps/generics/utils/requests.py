@@ -1,4 +1,4 @@
-from urllib.request import Request
+from rest_framework.request import Request
 
 from apps.accounts.models.member import Member
 from apps.accounts.models.organization import Organization
@@ -26,3 +26,22 @@ def get_member(request: Request) -> Member | None:
     if not (organization_id := request.session.get('organization_id')):
         return None
     return user.members.get_or_none(organization_id=organization_id)
+
+
+def is_same_organization_scope(
+    obj,
+    organization_id: int | None,
+    lookup: str = 'organization_id',
+    separator: str = '.',
+) -> bool:
+    """Check whether an object belongs to the given organization scope."""
+    if not organization_id:
+        return False
+
+    current = obj
+    for attr in lookup.split(separator):
+        current = getattr(current, attr, None)
+        if current is None:
+            return False
+
+    return current == organization_id
