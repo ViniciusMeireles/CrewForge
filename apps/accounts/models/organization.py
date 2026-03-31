@@ -17,7 +17,7 @@ class Organization(BaseModel):
     )
     owner = models.ForeignKey(
         to='accounts.Member',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name='owned_organizations',
         verbose_name=_('Owner'),
         help_text=_('Owner of the organization'),
@@ -55,12 +55,11 @@ class OrganizationProfile(BaseModel):
         verbose_name=_('Organization'),
         help_text=_('Organization to which this profile belongs'),
     )
-    logo = models.ImageField(
-        upload_to='organization/logos',
-        null=True,
-        blank=True,
-        verbose_name=_('Logo'),
-        help_text=_('Organization logo'),
+    logos = models.ManyToManyField(
+        to='accounts.StoredFile',
+        related_name='+',
+        verbose_name=_('Logos'),
+        help_text=_('Organization logos'),
     )
     website = models.URLField(
         null=True,

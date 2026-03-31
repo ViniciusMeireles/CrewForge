@@ -12,7 +12,7 @@ class UserReadySerializer(ModelSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
-        read_only_fields = ['id']
+        read_only_fields = fields
 
 
 class UserSerializer(ModelSerializerMixin, serializers.ModelSerializer):

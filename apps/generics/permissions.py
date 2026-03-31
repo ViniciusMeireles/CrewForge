@@ -38,12 +38,13 @@ class OrganizationScopedPermission(IsActiveMember):
     def get_session_organization_id(cls, request):
         return get_organization_id(request)
 
-    def has_organization_scope(self, request, obj) -> bool:
-        organization_id = self.get_session_organization_id(request)
+    @classmethod
+    def has_organization_scope(cls, request, obj) -> bool:
+        organization_id = cls.get_session_organization_id(request)
         return is_same_organization_scope(
             obj=obj,
             organization_id=organization_id,
-            lookup=self.organization_lookup,
+            lookup=cls.organization_lookup,
         )
 
     def has_object_permission(self, request, view, obj):

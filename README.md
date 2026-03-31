@@ -41,6 +41,7 @@ and secure authentication mechanisms.
 - :closed_lock_with_key: **Authentication**: JWT-based authentication with refresh token support and password reset functionality.
 - :crown: **Role-Based Access Control**: Four-tier role system (Owner, Admin, Manager, Member) with hierarchical permissions.
 - :mag: **Comprehensive Filtering**: Advanced query parameter support for searching and filtering across all resources.
+- :file_folder: **File Storage**: Secure file upload and download with role-based access control.
 - :books: **Comprehensive API Documentation**: Auto-generated Swagger documentation for easy API exploration and testing.
 
 
@@ -52,6 +53,7 @@ and secure authentication mechanisms.
 - :jigsaw: **Team**: Represents a group within an organization, supporting nested structures and custom roles.
 - :incoming_envelope: **Invitation**: Represents an invitation sent to a user to join an organization or team with specific roles.
 - :link: **Team Members**: Represents the association between members and teams, including their roles within the team.
+- :file_folder: **StoredFile**: Represents a file stored in the system with access permissions based on ownership and organization roles.
 
 ### Authentication Flow :closed_lock_with_key:
 User login must be performed in **3 steps**:
@@ -79,6 +81,8 @@ Additional authentication-related actions:
 ### Endpoint Structure :satellite:
 #### Accounts Module :busts_in_silhouette:
 - :incoming_envelope: `/api/accounts/invitations/` - Invitation management.
+- :file_folder: `/api/accounts/stored_files/` - File management (upload, list, retrieve, update, delete).
+- :file_folder: `/api/accounts/stored_files/{uuid}/file/` - Download a stored file (supports `?download=true` for attachment).
 - :bust_in_silhouette: `/api/accounts/members/` - Organization member management.
 - :office: `/api/accounts/organizations/` - Organization CRUD operations.
 - :closed_lock_with_key: `/api/accounts/organizations/{id}/login/` - Organization login to define session context.
@@ -188,6 +192,7 @@ Interactive API documentation is available at `http://localhost:8000/api/schema/
 - :lock: Password reset functionality with secure token handling.
 - :crown: Role-based access control with hierarchical permissions.
 - :alarm_clock: Invitation expiration controls.
+- :file_folder: File-based access control with role-based permissions (Owner, Owners Organization, Admins Organization, Managers Organization, Members Organization, Public).
 - :e-mail: Secure password reset workflow.
 - :globe_with_meridians: CORS protection configured for production environments.
 

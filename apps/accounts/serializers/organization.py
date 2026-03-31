@@ -7,6 +7,17 @@ from apps.accounts.models.organization import Organization
 from apps.generics.serializers.mixins import ModelSerializerMixin
 
 
+class OrganizationReadySerializer(ModelSerializerMixin, serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = [
+            'id',
+            'name',
+            'slug',
+        ]
+        read_only_fields = fields
+
+
 class OrganizationSerializer(ModelSerializerMixin, serializers.ModelSerializer):
     """Serializer for the Organization model."""
 
