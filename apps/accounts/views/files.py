@@ -13,6 +13,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 
 from apps.accounts.choices import StoredFileAccess
 from apps.accounts.filters.files import StoredFileFilter
+from apps.accounts.mixins.views import ModelViewSetMixin
 from apps.accounts.models.files import StoredFile
 from apps.accounts.permissions.files import StoredFilePermission
 from apps.accounts.serializers.files import (
@@ -27,7 +28,6 @@ from apps.generics.utils.schema import (
     extend_schema_update,
 )
 from apps.generics.utils.strings import str_to_bool
-from apps.generics.views.mixins import ModelViewSetMixin
 
 logger = logging.getLogger(__name__)
 

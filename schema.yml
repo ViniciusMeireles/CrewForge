@@ -2351,10 +2351,14 @@ components:
           type: integer
           nullable: true
           description: Organization to which the file belongs
-        download_name:
+        file_url:
           type: string
-          description: Return the name to download the file.
+          nullable: true
           readOnly: true
+        content_type:
+          type: string
+          readOnly: true
+          description: Content type of the file
         original_name:
           type: string
           readOnly: true
@@ -2363,19 +2367,15 @@ components:
           type: integer
           readOnly: true
           description: Size of the file
-        content_type:
-          type: string
-          readOnly: true
-          description: Content type of the file
-        file_url:
-          type: string
-          nullable: true
-          readOnly: true
         uuid:
           type: string
           format: uuid
           readOnly: true
           description: Unique identifier for the file
+        download_name:
+          type: string
+          description: Return the name to download the file.
+          readOnly: true
         updated_at:
           type: string
           format: date-time
@@ -2539,10 +2539,14 @@ components:
           type: integer
           nullable: true
           description: Organization to which the file belongs
-        download_name:
+        file_url:
           type: string
-          description: Return the name to download the file.
+          nullable: true
           readOnly: true
+        content_type:
+          type: string
+          readOnly: true
+          description: Content type of the file
         original_name:
           type: string
           readOnly: true
@@ -2551,19 +2555,15 @@ components:
           type: integer
           readOnly: true
           description: Size of the file
-        content_type:
-          type: string
-          readOnly: true
-          description: Content type of the file
-        file_url:
-          type: string
-          nullable: true
-          readOnly: true
         uuid:
           type: string
           format: uuid
           readOnly: true
           description: Unique identifier for the file
+        download_name:
+          type: string
+          description: Return the name to download the file.
+          readOnly: true
         updated_at:
           type: string
           format: date-time

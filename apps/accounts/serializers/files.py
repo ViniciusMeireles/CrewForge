@@ -8,10 +8,10 @@ from rest_framework.fields import ChoiceField
 from rest_framework.serializers import SerializerMetaclass
 
 from apps.accounts.choices import StoredFileAccess
+from apps.accounts.mixins.serializers import ModelSerializerMixin
 from apps.accounts.models.files import StoredFile
 from apps.accounts.serializers.organization import OrganizationReadySerializer
 from apps.accounts.serializers.user import UserReadySerializer
-from apps.generics.serializers.mixins import ModelSerializerMixin
 
 
 class StoredFileListModelSerializer(

@@ -3,7 +3,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from apps.accounts.choices import StoredFileAccess
 from apps.accounts.models.files import StoredFile
-from apps.generics.utils.requests import get_member
+from apps.accounts.utils.requests import get_member
 
 
 class StoredFilePermission(BasePermission):

@@ -12,11 +12,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from apps.accounts.filters.organization import OrganizationFilter
+from apps.accounts.mixins.views import ModelViewSetMixin
 from apps.accounts.models.organization import Organization
 from apps.accounts.permissions.organization import OrganizationPermission
 from apps.accounts.serializers.organization import OrganizationSerializer
 from apps.generics.utils.schema import extend_schema_model_view_set
-from apps.generics.views.mixins import ModelViewSetMixin
 
 
 @extend_schema_model_view_set(

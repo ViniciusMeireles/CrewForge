@@ -1,7 +1,7 @@
 from django_filters.rest_framework import filterset
 
+from apps.accounts.mixins.filters import FilterSetMixin
 from apps.accounts.models.files import StoredFile
-from apps.generics.filters.mixins import FilterSetMixin
 
 
 class StoredFileFilter(FilterSetMixin, filterset.FilterSet):

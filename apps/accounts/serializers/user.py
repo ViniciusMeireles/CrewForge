@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from apps.generics.serializers.mixins import ModelSerializerMixin
+from apps.accounts.mixins.serializers import ModelSerializerMixin
 from apps.generics.utils.models import get_verbose_name_field
 from apps.generics.utils.shortcuts import get_object_or_none
 

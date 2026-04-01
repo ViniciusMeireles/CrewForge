@@ -1,6 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 
-from apps.generics.utils.requests import (
+from apps.accounts.utils.requests import (
     get_member,
     get_organization_id,
     is_same_organization_scope,
