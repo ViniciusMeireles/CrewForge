@@ -187,6 +187,15 @@ Interactive API documentation is available at `http://localhost:8000/api/schema/
 - Authentication support for testing secured endpoints.
 
 
+## Design Patterns :blue_book:
+CrewForge follows established design patterns for maintainability and extensibility. Documentation is available in the `docs/` directory:
+
+- [Structural Patterns](./docs/structural-patterns.md) - Mixin, Abstract Model, and Module patterns
+- [Behavioral Patterns](./docs/behavioral-patterns.md) - Template Method, Strategy, and Validation patterns
+- [Creational Patterns](./docs/creational-patterns.md) - Factory Method and Builder patterns
+- [Architectural Patterns](./docs/architectural-patterns.md) - Layered Architecture, Facade, and Test Infrastructure
+
+
 ## Security Features :shield:
 - :closed_lock_with_key: JWT-based authentication with access and refresh tokens.
 - :lock: Password reset functionality with secure token handling.

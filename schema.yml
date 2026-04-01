@@ -2355,27 +2355,27 @@ components:
           type: string
           nullable: true
           readOnly: true
-        content_type:
-          type: string
-          readOnly: true
-          description: Content type of the file
         original_name:
           type: string
           readOnly: true
           description: Original name of the file
-        size:
-          type: integer
+        download_name:
+          type: string
+          description: Return the name to download the file.
           readOnly: true
-          description: Size of the file
         uuid:
           type: string
           format: uuid
           readOnly: true
           description: Unique identifier for the file
-        download_name:
+        content_type:
           type: string
-          description: Return the name to download the file.
           readOnly: true
+          description: Content type of the file
+        size:
+          type: integer
+          readOnly: true
+          description: Size of the file
         updated_at:
           type: string
           format: date-time
@@ -2543,27 +2543,27 @@ components:
           type: string
           nullable: true
           readOnly: true
-        content_type:
-          type: string
-          readOnly: true
-          description: Content type of the file
         original_name:
           type: string
           readOnly: true
           description: Original name of the file
-        size:
-          type: integer
+        download_name:
+          type: string
+          description: Return the name to download the file.
           readOnly: true
-          description: Size of the file
         uuid:
           type: string
           format: uuid
           readOnly: true
           description: Unique identifier for the file
-        download_name:
+        content_type:
           type: string
-          description: Return the name to download the file.
           readOnly: true
+          description: Content type of the file
+        size:
+          type: integer
+          readOnly: true
+          description: Size of the file
         updated_at:
           type: string
           format: date-time
