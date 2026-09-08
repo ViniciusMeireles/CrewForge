@@ -2865,7 +2865,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedTeamList'
+                $ref: '#/components/schemas/PaginatedTeamListList'
           description: ''
     post:
       operationId: teams_teams_create
@@ -4396,7 +4396,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TeamChoicesResponse'
-    PaginatedTeamList:
+    PaginatedTeamListList:
       type: object
       required:
       - count
@@ -4418,7 +4418,7 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Team'
+            $ref: '#/components/schemas/TeamList'
     PaginatedTeamMemberChoicesResponseList:
       type: object
       required:
@@ -5253,6 +5253,7 @@ components:
         is_active:
           type: boolean
           readOnly: true
+          default: true
           description: Is this record active or not
         created_at:
           type: string
@@ -5270,8 +5271,8 @@ components:
           maxLength: 100
         slug:
           type: string
+          readOnly: true
           description: Team slug
-          maxLength: 50
           pattern: ^[-a-zA-Z0-9_]+$
         description:
           type: string
@@ -5311,6 +5312,70 @@ components:
       required:
       - label
       - value
+    TeamList:
+      type: object
+      description: Mixin for ModelSerializer to add user, member, and organization
+        properties.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        member_count:
+          type: integer
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+          default: true
+          description: Is this record active or not
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was initially created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When the record was last updated
+        name:
+          type: string
+          description: Name of the team
+          maxLength: 100
+        slug:
+          type: string
+          readOnly: true
+          description: Team slug
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+          nullable: true
+          description: Description of the team
+        created_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who created the record
+        updated_by:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: User who last updated the record
+        organization:
+          type: integer
+          readOnly: true
+          description: Organization to which the team belongs
+      required:
+      - created_at
+      - created_by
+      - id
+      - is_active
+      - member_count
+      - name
+      - organization
+      - slug
+      - updated_at
+      - updated_by
     TeamMember:
       type: object
       description: Serializer for the TeamMember model.

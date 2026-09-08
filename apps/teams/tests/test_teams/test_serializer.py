@@ -19,7 +19,6 @@ class TeamSerializerTestCase(APITestCaseMixin, APITestCase):
         team_data = TeamFactory.build()
         payload = {
             'name': team_data.name,
-            'slug': team_data.slug,
             'description': team_data.description,
         }
         payload.update(overrides)
@@ -78,22 +77,12 @@ class TeamSerializerTestCase(APITestCaseMixin, APITestCase):
             'updated_at',
             'created_by',
             'updated_by',
+            'member_count',
         }
         self.assertEqual(set(result.keys()), expected_fields)
 
-    def test_validate_duplicate_slug_in_same_org(self):
-        team = TeamFactory(organization=self.organization)
-        payload = self._team_payload(slug=team.slug)
-        response = self.client.post(self.list_url, data=payload, format='json')
-        self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
-
     def test_validate_empty_name(self):
         payload = self._team_payload(name='')
-        response = self.client.post(self.list_url, data=payload, format='json')
-        self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
-
-    def test_validate_empty_slug(self):
-        payload = self._team_payload(slug='')
         response = self.client.post(self.list_url, data=payload, format='json')
         self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
 
@@ -105,11 +94,6 @@ class TeamSerializerTestCase(APITestCaseMixin, APITestCase):
 
     def test_validate_name_too_long(self):
         payload = self._team_payload(name='n' * 101)
-        response = self.client.post(self.list_url, data=payload, format='json')
-        self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
-
-    def test_validate_slug_too_long(self):
-        payload = self._team_payload(slug='s' * 51)
         response = self.client.post(self.list_url, data=payload, format='json')
         self.assertEqual(response.status_code, http_status.HTTP_400_BAD_REQUEST)
 
